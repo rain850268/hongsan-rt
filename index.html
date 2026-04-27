@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>紅杉｜再行銷戰情室</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --pri:#2D1B15;--pri-light:#7A5F56;--accent:#C84B31;--accent2:#E8874B;
+  --bg:#FAF7F4;--card:#fff;--border:#EDE8E3;
+  --text:#2D1B15;--muted:#9A8A82;
+  --green:#0F7B6C;--red:#C84B31;--amber:#936800;--blue:#0B6E99;--purple:#7B5EA7;
+  --line-green:#06C755;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-serif;
+  background:var(--bg);color:var(--text);font-size:14px;}
+
+nav{position:sticky;top:0;z-index:100;background:var(--pri);
+  display:flex;align-items:center;gap:4px;padding:0 16px;overflow-x:auto;}
+nav a{color:rgba(255,255,255,0.7);text-decoration:none;padding:14px 14px;
+  white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;
+  font-size:13px;font-weight:500;}
+nav a.active{color:#fff;border-bottom-color:var(--accent);}
+nav a:hover:not(.active){color:rgba(255,255,255,0.9);}
+.nav-brand{color:#fff;font-weight:700;font-size:15px;margin-right:8px;
+  white-space:nowrap;padding:14px 8px 14px 0;border-right:1px solid rgba(255,255,255,0.2);}
+
+.tab{display:none;}.tab.active{display:block;}
+.page{max-width:1200px;margin:0 auto;padding:20px 16px 60px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+@media(max-width:700px){.grid2,.grid3,.grid5{grid-template-columns:1fr;}}
+@media(max-width:900px) and (min-width:701px){.grid3{grid-template-columns:1fr 1fr;}.grid5{grid-template-columns:1fr 1fr;}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;}
+h2{font-size:17px;font-weight:700;margin-bottom:16px;}
+h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.mb16{margin-bottom:16px;}.mb20{margin-bottom:20px;}
+.section-title{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.updated{font-size:11px;color:var(--muted);margin-left:auto;}
+
+.hero{background:linear-gradient(135deg,#2D1B15 0%,#5C2D1E 100%);
+  color:#fff;border-radius:16px;padding:28px;margin-bottom:20px;}
+.hero-title{font-size:13px;opacity:.8;margin-bottom:6px;}
+.hero-month{font-size:28px;font-weight:800;margin-bottom:4px;}
+.hero-sub{font-size:12px;opacity:.65;}
+
+.kpi{text-align:center;padding:16px;}
+.kpi .val{font-size:26px;font-weight:800;color:var(--text);}
+.kpi .lbl{font-size:12px;color:var(--muted);margin-top:4px;}
+.kpi .delta{font-size:11px;margin-top:3px;}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;}
+.tag-green{background:#DBEDDB;color:#0F7B6C;}
+.tag-red{background:#FFE2DD;color:#8D1619;}
+.tag-amber{background:#FDECC8;color:#705826;}
+.tag-blue{background:#D3E5EF;color:#0B6E99;}
+.tag-gray{background:#E3E2E0;color:#6F6E69;}
+.tag-purple{background:#EDE9F4;color:#7B5EA7;}
+
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:8px 10px;font-size:11px;font-weight:600;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.4px;
+  border-bottom:1px solid var(--border);background:#FAFAF8;}
+td{padding:9px 10px;border-bottom:1px solid #F2EDE7;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#FAF5F2;}
+.tbl-scroll{overflow-x:auto;}
+.num{text-align:right;font-variant-numeric:tabular-nums;}
+.roas-hi{color:var(--green);font-weight:700;}
+.roas-lo{color:var(--red);}
+.roas-ok{color:var(--amber);}
+
+/* Channel sub-tabs */
+.sub-tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:0;}
+.sub-tab{padding:8px 16px;border:none;background:none;cursor:pointer;font-size:13px;
+  font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;}
+.sub-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.sub-panel{display:none;}.sub-panel.active{display:block;}
+
+/* Collapsible detail rows */
+.month-row{cursor:pointer;user-select:none;}
+.month-row:hover td{background:#FAF5F2;}
+.expand-btn{display:inline-flex;align-items:center;gap:6px;font-weight:700;}
+.expand-icon{transition:transform .2s;display:inline-block;font-size:10px;}
+.detail-row{display:none;}
+.detail-row.open{display:table-row;}
+.detail-cell{padding:0 !important;border-bottom:1px solid var(--border)!important;}
+.detail-inner{padding:12px 16px 16px;background:#FAF7F4;}
+.detail-inner table{font-size:12px;}
+
+/* Chart filter */
+.filter-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-btn{padding:5px 12px;border:1px solid var(--border);border-radius:99px;
+  background:var(--card);cursor:pointer;font-size:12px;transition:all .2s;font-weight:500;}
+.filter-btn.active{color:#fff;border-color:transparent;}
+.filter-btn.fb-all.active{background:var(--pri);}
+.filter-btn.fb-line.active{background:var(--line-green);}
+.filter-btn.fb-edm.active{background:var(--blue);}
+.filter-btn.fb-auto.active{background:var(--purple);}
+
+/* Insight cards */
+.ins-card{border:1px solid var(--border);border-radius:12px;padding:18px;
+  background:var(--card);border-left:4px solid var(--pri);}
+.ins-card.good{border-left-color:var(--green);}
+.ins-card.warn{border-left-color:var(--accent2);}
+.ins-card.info{border-left-color:var(--blue);}
+.ins-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.ins-icon{font-size:20px;}
+.ins-title{font-weight:700;font-size:13px;flex:1;}
+.ins-body{color:#3A3A3A;line-height:1.7;font-size:13px;}
+
+/* Year chart */
+.chart-wrap{position:relative;height:280px;}
+.chart-note{font-size:11px;color:var(--muted);margin-top:8px;text-align:right;}
+
+/* Year summary table highlight */
+.yr-row td{font-size:13px;}
+.yr-row-best td{background:#F0F9F4;}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">紅杉｜再行銷</span>
+  <a href="#" class="active" onclick="showTab('dashboard',this)">Dashboard</a>
+  <a href="#" onclick="showTab('y2023',this)">2023</a>
+  <a href="#" onclick="showTab('y2024',this)">2024</a>
+  <a href="#" onclick="showTab('y2025',this)">2025</a>
+  <a href="#" onclick="showTab('y2026',this)">2026</a>
+</nav>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="tab-dashboard" class="tab active">
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero mb20">
+    <div class="hero-title">紅杉有限公司 ／ 再行銷成效追蹤</div>
+    <div class="hero-month">2026 年 3 月</div>
+    <div class="hero-sub">最後更新：2026.03.31 ・ 渠道：LINE ／ EDM ／ 自動化行銷（漸強）</div>
+  </div>
+
+  <!-- ROAS Trend Chart -->
+  <div class="card mb20">
+    <div class="section-title">📈 全渠道 ROAS 月度趨勢
+      <span class="updated">* 2025 年 1–5 月資料缺漏</span>
+    </div>
+    <div class="filter-row">
+      <button class="filter-btn fb-all active" onclick="toggleLine('all',this)">全渠道</button>
+      <button class="filter-btn fb-line active" onclick="toggleLine('line',this)">LINE</button>
+      <button class="filter-btn fb-edm active" onclick="toggleLine('edm',this)">EDM</button>
+      <button class="filter-btn fb-auto active" onclick="toggleLine('auto',this)">自動化</button>
+    </div>
+    <div class="chart-wrap"><canvas id="roasChart"></canvas></div>
+    <div class="chart-note">自動化行銷（漸強）僅 2025.06 與 2026.03 有完整追蹤數據</div>
+  </div>
+
+  <!-- Latest Month KPIs -->
+  <div class="section-title">📊 2026.03 月度核心指標</div>
+  <div class="grid5 mb20">
+    <div class="card kpi">
+      <div class="val">9.29</div>
+      <div class="lbl">總 ROAS（含自動化）</div>
+      <div class="delta"><span class="tag tag-green">↑ LINE 3.20</span></div>
+    </div>
+    <div class="card kpi">
+      <div class="val">$15,071</div>
+      <div class="lbl">總花費（TWD）</div>
+      <div class="delta"><span class="tag tag-gray">LINE 13,115 / EDM 1,140</span></div>
+    </div>
+    <div class="card kpi">
+      <div class="val">$139,955</div>
+      <div class="lbl">歸因業績（TWD）</div>
+      <div class="delta"><span class="tag tag-blue">自動化佔 70%</span></div>
+    </div>
+    <div class="card kpi">
+      <div class="val">22.6%</div>
+      <div class="lbl">會員回購率</div>
+      <div class="delta"><span class="tag tag-amber">↓ 前月 29.2%</span></div>
+    </div>
+    <div class="card kpi">
+      <div class="val">57.7%</div>
+      <div class="lbl">新會員下單率</div>
+      <div class="delta"><span class="tag tag-amber">↓ 前月 73.5%</span></div>
+    </div>
+  </div>
+
+  <!-- Detail Data -->
+  <div class="card mb20">
+    <div class="section-title">📋 2026.03 詳細渠道數據</div>
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="showSub('line2603',this,'grp2603')">LINE 推播</button>
+      <button class="sub-tab" onclick="showSub('edm2603',this,'grp2603')">EDM</button>
+      <button class="sub-tab" onclick="showSub('auto2603',this,'grp2603')">自動化行銷</button>
+      <button class="sub-tab" onclick="showSub('menu2603',this,'grp2603')">圖文選單</button>
+    </div>
+
+    <!-- LINE -->
+    <div id="line2603" class="sub-panel active">
+      <div class="tbl-scroll">
+      <table>
+        <thead><tr>
+          <th>日期</th><th>主題</th><th class="num">名單數</th><th class="num">開信率</th><th class="num">點擊率</th><th class="num">GA業績</th><th class="num">ROAS</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>03/06</td><td>3月開學季 ✦ LINE 好友限定幸運轉盤</td><td class="num">8,127</td><td class="num">28.2%</td><td class="num">0%</td><td class="num">$15,078</td><td class="num roas-hi">4.64</td></tr>
+          <tr><td>03/15</td><td>紅杉會員日 ✦ 老會員回娘家</td><td class="num">8,182</td><td class="num">29.3%</td><td class="num">5.31%</td><td class="num">$10,624</td><td class="num roas-ok">3.25</td></tr>
+          <tr><td>03/20</td><td>LINE 好友專屬 ✦ 秘密優惠</td><td class="num">8,223</td><td class="num">32.5%</td><td class="num">10.14%</td><td class="num">$14,272</td><td class="num roas-ok">4.34</td></tr>
+          <tr><td>03/30</td><td>一分鐘宅料理｜蜜香咕咾肉</td><td class="num">8,256</td><td class="num">24.5%</td><td class="num">0.84%</td><td class="num">$1,981</td><td class="num roas-lo">0.60</td></tr>
+          <tr style="background:#FAF7F4;font-weight:700"><td colspan="5">合計</td><td class="num">$41,955</td><td class="num">3.20</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- EDM -->
+    <div id="edm2603" class="sub-panel">
+      <div class="tbl-scroll">
+      <table>
+        <thead><tr>
+          <th>月份</th><th>主題</th><th class="num">名單數</th><th class="num">開信率</th><th class="num">點擊率</th><th class="num">GA業績</th><th class="num">花費</th><th class="num">ROAS</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>2026.02</td><td>馬上加菜 / 會員日 / 訂閱制 / 新品任選</td><td class="num">5,699</td><td class="num">20.0%</td><td class="num">2.2%</td><td class="num">$0</td><td class="num">$1,140</td><td class="num roas-lo">0</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px;">* EDM 業績歸因窗口為發送後 30 天，本月 EDM 為 2 月寄出，歸因可能跨月低估</p>
+    </div>
+
+    <!-- Auto -->
+    <div id="auto2603" class="sub-panel">
+      <div class="tbl-scroll">
+      <table>
+        <thead><tr>
+          <th>流程</th><th>分類</th><th class="num">觸及</th><th class="num">訂單</th><th class="num">業績</th><th class="num">花費</th><th class="num">ROAS</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>新客 ｜ 免運優惠（LINE）</td><td><span class="tag tag-green">新客</span></td><td class="num">339</td><td class="num">16</td><td class="num">$25,384</td><td class="num">$136</td><td class="num roas-hi">187</td></tr>
+          <tr><td>新客 ｜ 三天後未下單（LINE）</td><td><span class="tag tag-green">新客</span></td><td class="num">307</td><td class="num">2</td><td class="num">$2,398</td><td class="num">$123</td><td class="num roas-hi">19.5</td></tr>
+          <tr><td>剛完成下單 ｜ 回購推薦碼（LINE）</td><td><span class="tag tag-blue">購後</span></td><td class="num">46</td><td class="num">1</td><td class="num">$1,896</td><td class="num">$18</td><td class="num roas-hi">103</td></tr>
+          <tr><td>購物車未結帳挽回（LINE）</td><td><span class="tag tag-amber">挽回</span></td><td class="num">219</td><td class="num">3</td><td class="num">$5,457</td><td class="num">$88</td><td class="num roas-hi">62</td></tr>
+          <tr><td>每月優惠 ｜ 潛在忠誠會員（LINE）</td><td><span class="tag tag-purple">舊客</span></td><td class="num">157</td><td class="num">4</td><td class="num">$8,740</td><td class="num">$63</td><td class="num roas-hi">139</td></tr>
+          <tr><td>回鍋組 ｜ 開發型客戶（LINE）</td><td><span class="tag tag-purple">舊客</span></td><td class="num">53</td><td class="num">4</td><td class="num">$5,612</td><td class="num">$21</td><td class="num roas-hi">265</td></tr>
+          <tr><td>黃金會員日 ｜ 忠誠會員（LINE）</td><td><span class="tag tag-purple">舊客</span></td><td class="num">225</td><td class="num">19</td><td class="num">$45,709</td><td class="num">$90</td><td class="num roas-hi">508</td></tr>
+          <tr><td>未加入購物車再行銷 6hr（LINE）</td><td><span class="tag tag-amber">挽回</span></td><td class="num">122</td><td class="num">1</td><td class="num">$2,804</td><td class="num">$49</td><td class="num roas-hi">57</td></tr>
+          <tr style="background:#FAF7F4;font-weight:700"><td colspan="4">合計</td><td class="num">$98,000</td><td class="num">$816</td><td class="num">120</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px;">* 自動化 ROAS 高因訊息成本極低（0.4 元 / 人），業績為 Cyberbiz 後台訂單歸因</p>
+    </div>
+
+    <!-- Menu -->
+    <div id="menu2603" class="sub-panel">
+      <div class="tbl-scroll">
+      <table>
+        <thead><tr>
+          <th>選單名稱</th><th class="num">點擊數</th><th class="num">訂單數</th><th class="num">營收</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>紅杉宅料理圖文選單 ─ 主選單（春夏）</td><td class="num">313</td><td class="num">19</td><td class="num">$37,082</td></tr>
+          <tr><td>忠誠會員 ｜ 圖文選單</td><td class="num">111</td><td class="num">4</td><td class="num">$10,872</td></tr>
+          <tr style="background:#FAF7F4;font-weight:700"><td>合計</td><td class="num">424</td><td class="num">23</td><td class="num">$47,954</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insight & 建議 -->
+  <div class="section-title">💡 2026.03 洞察與建議</div>
+  <div class="grid2 mb20">
+    <div class="ins-card good">
+      <div class="ins-header"><span class="ins-icon">🏆</span><span class="ins-title">黃金會員日效益最強</span></div>
+      <div class="ins-body">忠誠會員日（03/20）單次觸及 225 人帶來 <strong>$45,709</strong> 業績，佔自動化總業績 <strong>46.6%</strong>，ROAS 達 508x。建議每月固定排入一場忠誠會員日，並測試提前預告推播是否能拉高轉換。</div>
+    </div>
+    <div class="ins-card good">
+      <div class="ins-header"><span class="ins-icon">📈</span><span class="ins-title">LINE ROAS 回升至 3.20</span></div>
+      <div class="ins-body">本月 LINE ROAS 為近半年高點，03/20 秘密優惠點擊率 <strong>10.14%</strong> 遠超均值，顯示明確優惠訴求比內容型推播更具轉換力。建議每月保留至少一則「明確 Call-to-Action」推播。</div>
+    </div>
+    <div class="ins-card warn">
+      <div class="ins-header"><span class="ins-icon">⚠️</span><span class="ins-title">回購率與下單率同步下滑</span></div>
+      <div class="ins-body">回購率 22.6%（-6.6pp）、新會員下單率 57.7%（-15.8pp），均為近期低點。3 月新會員轉換壓力加大，建議優化新客歡迎流程中「三天後未下單」的訊息角度，強化首次嘗試誘因。</div>
+    </div>
+    <div class="ins-card info">
+      <div class="ins-header"><span class="ins-icon">📧</span><span class="ins-title">EDM 歸因為 0，需排查</span></div>
+      <div class="ins-body">3 月 EDM（2 月寄出）GA 歸因業績為 $0。可能原因：①歸因窗口設定問題 ②UTM 參數遺漏 ③Email 流量未觸及結帳。建議確認 EDM 連結的 UTM 設定，並與 2 月 EDM ROAS 6.41 相比對，找出差異點。</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===== 2023 ===== -->
+<div id="tab-y2023" class="tab">
+<div class="page">
+  <div class="hero mb20">
+    <div class="hero-title">2023 年度 ／ 再行銷成效</div>
+    <div class="hero-month">2023.10 — 2023.12</div>
+    <div class="hero-sub">資料範圍：活動成效格式（行銷剛起步）・ 渠道：LINE ／ EDM</div>
+  </div>
+  <div class="card mb20">
+    <div class="section-title">📈 月度 ROAS 趨勢</div>
+    <div class="chart-wrap"><canvas id="chart2023"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="section-title">月度摘要</div>
+    <div class="tbl-scroll">
+    <table id="tbl2023">
+      <thead><tr>
+        <th>月份</th><th>活動主題</th><th class="num">LINE ROAS</th><th class="num">LINE 花費</th><th class="num">LINE 業績</th><th class="num">活動總業績</th><th class="num">回購率</th><th class="num">下單率</th><th></th>
+      </tr></thead>
+      <tbody id="body2023"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== 2024 ===== -->
+<div id="tab-y2024" class="tab">
+<div class="page">
+  <div class="hero mb20">
+    <div class="hero-title">2024 年度 ／ 再行銷成效</div>
+    <div class="hero-month">2024.01 — 2024.12</div>
+    <div class="hero-sub">資料範圍：活動成效格式 ・ 渠道：LINE ／ EDM</div>
+  </div>
+  <div class="card mb20">
+    <div class="section-title">📈 月度 ROAS 趨勢</div>
+    <div class="chart-wrap"><canvas id="chart2024"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="section-title">月度摘要</div>
+    <div class="tbl-scroll">
+    <table>
+      <thead><tr>
+        <th>月份</th><th>活動主題</th><th class="num">LINE ROAS</th><th class="num">LINE 花費</th><th class="num">LINE 業績</th><th class="num">活動總業績</th><th class="num">回購率</th><th class="num">下單率</th><th></th>
+      </tr></thead>
+      <tbody id="body2024"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== 2025 ===== -->
+<div id="tab-y2025" class="tab">
+<div class="page">
+  <div class="hero mb20">
+    <div class="hero-title">2025 年度 ／ 再行銷成效</div>
+    <div class="hero-month">2025.06 — 2025.12（1–5 月資料缺漏）</div>
+    <div class="hero-sub">渠道：LINE ／ EDM ／ 漸強自動化（2025.06 啟動）</div>
+  </div>
+  <div class="card mb20">
+    <div class="section-title">📈 月度 ROAS 趨勢</div>
+    <div class="chart-wrap"><canvas id="chart2025"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="section-title">月度摘要</div>
+    <div class="tbl-scroll">
+    <table>
+      <thead><tr>
+        <th>月份</th><th class="num">總 ROAS</th><th class="num">LINE ROAS</th><th class="num">EDM ROAS</th><th class="num">花費</th><th class="num">業績</th><th class="num">回購率</th><th class="num">下單率</th><th></th>
+      </tr></thead>
+      <tbody id="body2025"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== 2026 ===== -->
+<div id="tab-y2026" class="tab">
+<div class="page">
+  <div class="hero mb20">
+    <div class="hero-title">2026 年度 ／ 再行銷成效</div>
+    <div class="hero-month">2026.01 — 2026.03</div>
+    <div class="hero-sub">渠道：LINE ／ EDM ／ 漸強自動化（2026.03 新增完整追蹤）</div>
+  </div>
+  <div class="card mb20">
+    <div class="section-title">📈 月度 ROAS 趨勢</div>
+    <div class="chart-wrap"><canvas id="chart2026"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="section-title">月度摘要</div>
+    <div class="tbl-scroll">
+    <table>
+      <thead><tr>
+        <th>月份</th><th class="num">總 ROAS</th><th class="num">LINE ROAS</th><th class="num">EDM ROAS</th><th class="num">花費</th><th class="num">業績</th><th class="num">回購率</th><th class="num">下單率</th><th></th>
+      </tr></thead>
+      <tbody id="body2026"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────
+const DATA = {
+  '2023.10':{label:'23.10',month:'10月',year:2023,theme:'告別假期症候群',line_roas:1.88,edm_roas:0,auto_roas:null,total_roas:1.88,cost:1762,rev:3304,act_rev:86207,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'10/11',name:'Line推播_上線',members:2219,open:42.4,click:2.7,rev:3304,roas:6.10},
+      {ch:'LINE',date:'10/11',name:'Line推播_預熱',members:2185,open:41.4,click:2.7,rev:0,roas:0},
+      {ch:'EDM',date:'10/11',name:'EDM',members:977,open:15.3,click:1.2,rev:0,roas:0},
+    ]
+  },
+  '2023.11':{label:'23.11',month:'11月',year:2023,theme:'秋風颯爽暖胃聖品',line_roas:13.36,edm_roas:0,auto_roas:null,total_roas:13.36,cost:1834,rev:24497,act_rev:85952,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'11/12',name:'line 雙11快閃活動',members:2288,open:42.6,click:2.5,rev:15709,roas:34.33},
+      {ch:'LINE',date:'11/20',name:'line 11月活動',members:2296,open:39.4,click:1.1,rev:8788,roas:19.14},
+      {ch:'EDM',date:'11/12',name:'EDM',members:1035,open:19.4,click:1.3,rev:0,roas:0},
+    ]
+  },
+  '2023.12':{label:'23.12',month:'12月',year:2023,theme:'熱炒店＋素食＋露營',line_roas:0,edm_roas:0,auto_roas:null,total_roas:0,cost:2030,rev:0,act_rev:78172,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'12/14',name:'line 活動上線',members:2505,open:44.7,click:1.4,rev:0,roas:0},
+      {ch:'LINE',date:'12/20',name:'line 12月素食',members:2571,open:32.5,click:1.1,rev:0,roas:0},
+      {ch:'EDM',date:'12/14',name:'EDM',members:929,open:22.6,click:2.4,rev:0,roas:0},
+    ]
+  },
+  '2024.01':{label:'24.01',month:'1月',year:2024,theme:'年終前衝刺補給打氣',line_roas:17.27,edm_roas:0,auto_roas:null,total_roas:17.27,cost:2030,rev:35072,act_rev:243332,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'01/08',name:'line 3件999',members:2505,open:46.1,click:2.5,rev:25921,roas:47.0},
+      {ch:'LINE',date:'01/15',name:'line 1688組合',members:2571,open:42.6,click:2.7,rev:9151,roas:17.1},
+      {ch:'EDM',date:'01/08',name:'EDM',members:929,open:29.5,click:1.3,rev:0,roas:0},
+    ]
+  },
+  '2024.02':{label:'24.02',month:'2月',year:2024,theme:'開工不累美食萬歲',line_roas:8.29,edm_roas:0,auto_roas:null,total_roas:8.29,cost:2378,rev:19714,act_rev:114633,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'02/15',name:'line 紅包活動',members:2942,open:34.4,click:3.6,rev:15025,roas:25.5},
+      {ch:'LINE',date:'02/22',name:'line 組合推播',members:3003,open:43.7,click:1.5,rev:4689,roas:7.8},
+      {ch:'EDM',date:'02/15',name:'EDM',members:914,open:29.2,click:1.2,rev:0,roas:0},
+    ]
+  },
+  '2024.03':{label:'24.03',month:'3月',year:2024,theme:'咕咕雞肉祭',line_roas:7.60,edm_roas:7.84,auto_roas:null,total_roas:7.62,cost:2804,rev:21367,act_rev:318108,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'03/11',name:'line 咕咕雞',members:3187,open:43.1,click:1.5,rev:10873,roas:13.4},
+      {ch:'LINE',date:'03/20',name:'line 輕盈組合',members:3261,open:20.6,click:2.4,rev:8729,roas:4.2},
+      {ch:'EDM',date:'03/11',name:'EDM（露營/網紅）',members:1501,open:33.8,click:1.0,rev:1765,roas:7.84},
+    ]
+  },
+  '2024.04':{label:'24.04',month:'4月',year:2024,theme:'春分感謝祭',line_roas:7.72,edm_roas:0,auto_roas:null,total_roas:7.72,cost:2845,rev:21969,act_rev:171066,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'04/15',name:'line 春分感謝祭',members:3522,open:39.2,click:1.2,rev:12407,roas:17.6},
+      {ch:'LINE',date:'04/22',name:'line 59元加購',members:3591,open:34.6,click:1.8,rev:9562,roas:13.3},
+      {ch:'EDM',date:'04/15',name:'EDM',members:1842,open:24.5,click:0.5,rev:0,roas:0},
+    ]
+  },
+  '2024.05':{label:'24.05',month:'5月',year:2024,theme:'月光光心慌慌週週省',line_roas:7.42,edm_roas:11.11,auto_roas:null,total_roas:7.75,cost:3142,rev:24342,act_rev:193510,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'05/16',name:'line 週週省第一波',members:2333,open:44.5,click:2.1,rev:6732,roas:14.4},
+      {ch:'LINE',date:'05/23',name:'line 週週省第二波',members:2386,open:47.0,click:2.2,rev:5528,roas:11.6},
+      {ch:'LINE',date:'05/30',name:'line 週週省第三波',members:2442,open:38.7,click:1.6,rev:8992,roas:18.4},
+      {ch:'EDM',date:'05/16',name:'EDM',members:1854,open:14.9,click:1.8,rev:3090,roas:11.11},
+    ]
+  },
+  '2024.06':{label:'24.06',month:'6月',year:2024,theme:'夏季美食派對',line_roas:2.26,edm_roas:0,auto_roas:null,total_roas:2.26,cost:6268,rev:14143,act_rev:225862,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'06/06',name:'6月活動：夏季美食派對',members:3888,open:40.2,click:1.1,rev:4295,roas:5.47},
+      {ch:'LINE',date:'06/15',name:'0615 會員日推播',members:3926,open:39.7,click:0.9,rev:4582,roas:5.84},
+      {ch:'LINE',date:'06/17',name:'0617 點數推播',members:3925,open:36.1,click:0.6,rev:3707,roas:4.72},
+      {ch:'LINE',date:'06/20',name:'0620 問卷回饋',members:3930,open:40.7,click:1.5,rev:1559,roas:1.99},
+      {ch:'EDM',date:'06/06',name:'EDM',members:1990,open:14.5,click:1.1,rev:0,roas:0},
+    ]
+  },
+  '2024.07':{label:'24.07',month:'7月',year:2024,theme:'夏季溪邊野炊聖品',line_roas:1.17,edm_roas:0,auto_roas:null,total_roas:1.17,cost:3497,rev:4090,act_rev:226220,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'07/15',name:'0715 會員日：蜜香咕咾肉',members:4362,open:37.1,click:1.0,rev:4090,roas:4.98},
+      {ch:'LINE',date:'07/18',name:'0718 野炊活動',members:4381,open:39.8,click:1.7,rev:0,roas:0},
+      {ch:'EDM',date:'07/15',name:'EDM',members:2065,open:18.8,click:2.8,rev:0,roas:0},
+    ]
+  },
+  '2024.08':{label:'24.08',month:'8月',year:2024,theme:'888組合＋微醺之夜',line_roas:8.59,edm_roas:0,auto_roas:null,total_roas:8.59,cost:6758,rev:58014,act_rev:0,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'08/01',name:'0801 父親節環遊組合',members:4388,open:37.4,click:0.7,rev:6335,roas:7.67},
+      {ch:'LINE',date:'08/03',name:'0803 五號免運',members:4398,open:38.5,click:1.6,rev:9427,roas:11.38},
+      {ch:'LINE',date:'08/05',name:'0805 最後通知免運',members:4253,open:37.9,click:0.7,rev:16995,roas:19.98},
+      {ch:'LINE',date:'08/05',name:'0805 免運（一般）',members:4253,open:39.0,click:0.5,rev:2105,roas:2.47},
+      {ch:'LINE',date:'08/07',name:'0807 奧運抽獎',members:4166,open:40.2,click:3.6,rev:0,roas:0},
+      {ch:'LINE',date:'08/15',name:'0815 會員日',members:4234,open:41.2,click:1.8,rev:10032,roas:11.85},
+      {ch:'LINE',date:'08/20',name:'0820 夏日野餐',members:4285,open:38.5,click:0.7,rev:3939,roas:4.60},
+      {ch:'LINE',date:'08/27',name:'0827 健身日',members:4325,open:37.0,click:2.0,rev:9181,roas:10.61},
+    ]
+  },
+  '2024.09':{label:'24.09',month:'9月',year:2024,theme:'中秋烤肉 + 加購活動',line_roas:9.43,edm_roas:0,auto_roas:null,total_roas:9.43,cost:7058,rev:66590,act_rev:175171,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'09/01',name:'0901 中秋節',members:5133,open:41.8,click:1.5,rev:18772,roas:18.29},
+      {ch:'LINE',date:'09/05',name:'0905 海陸大亨',members:4997,open:41.3,click:0.9,rev:1545,roas:1.55},
+      {ch:'LINE',date:'09/08',name:'0908 千變便當',members:5004,open:39.6,click:2.6,rev:6699,roas:6.69},
+      {ch:'LINE',date:'09/11',name:'0911 老師烤得',members:5026,open:35.7,click:1.7,rev:7826,roas:7.79},
+      {ch:'LINE',date:'09/15',name:'0915 會員日',members:5032,open:40.5,click:1.1,rev:8888,roas:8.83},
+      {ch:'LINE',date:'09/15',name:'0915 新會員攻略',members:5061,open:37.3,click:1.0,rev:10796,roas:10.67},
+      {ch:'LINE',date:'09/18',name:'0918 海陸大亨2',members:5037,open:40.6,click:0.5,rev:12064,roas:11.98},
+    ]
+  },
+  '2024.10':{label:'24.10',month:'10月',year:2024,theme:'哞哞牛 + 萬聖節日料',line_roas:2.20,edm_roas:0,auto_roas:null,total_roas:2.20,cost:10405,rev:22939,act_rev:122374,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'10/01',name:'1001 千變便當2',members:5120,open:37.7,click:0.8,rev:6663,roas:6.51},
+      {ch:'LINE',date:'10/02',name:'1002 哞哞牛',members:5120,open:39.7,click:1.0,rev:4382,roas:4.28},
+      {ch:'LINE',date:'10/06',name:'1006 食來運轉',members:5155,open:36.7,click:1.2,rev:0,roas:0},
+      {ch:'LINE',date:'10/10',name:'1010 食來運轉',members:5187,open:38.5,click:3.4,rev:0,roas:0},
+      {ch:'LINE',date:'10/15',name:'1015 會員日',members:5227,open:38.7,click:1.2,rev:6871,roas:6.57},
+      {ch:'LINE',date:'10/18',name:'1018 萬聖節Ｘ日料',members:5251,open:37.4,click:1.0,rev:0,roas:0},
+      {ch:'LINE',date:'10/20',name:'1020 食來運轉',members:5256,open:35.1,click:2.7,rev:0,roas:0},
+      {ch:'LINE',date:'10/25',name:'1025 哞哞牛倒數',members:5291,open:32.8,click:1.0,rev:3685,roas:3.48},
+      {ch:'LINE',date:'10/30',name:'1030 食來運轉',members:5307,open:30.9,click:1.5,rev:0,roas:0},
+    ]
+  },
+  '2024.11':{label:'24.11',month:'11月',year:2024,theme:'黑白雞肉料理 + 暖心湯品',line_roas:7.61,edm_roas:0,auto_roas:null,total_roas:7.61,cost:8062,rev:61327,act_rev:57940,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'11/01',name:'1101 黑白料理對決',members:5321,open:39.5,click:1.3,rev:6211,roas:5.84},
+      {ch:'LINE',date:'11/07',name:'1107 雙11預熱',members:5343,open:34.9,click:0.8,rev:2168,roas:2.03},
+      {ch:'LINE',date:'11/10',name:'1110 雙11',members:5349,open:35.5,click:0.8,rev:18149,roas:16.96},
+      {ch:'LINE',date:'11/15',name:'1115 會員日',members:5377,open:36.3,click:1.3,rev:3303,roas:3.07},
+      {ch:'LINE',date:'11/17',name:'1117 暖心湯品祭',members:5433,open:39.5,click:2.2,rev:14154,roas:13.03},
+      {ch:'LINE',date:'11/22',name:'1122 黑白料理2',members:5560,open:33.7,click:0.9,rev:10322,roas:9.28},
+      {ch:'LINE',date:'11/26',name:'1126 模範生日報',members:5359,open:33.2,click:0.5,rev:7020,roas:6.55},
+    ]
+  },
+  '2024.12':{label:'24.12',month:'12月',year:2024,theme:'年末感謝祭 + 過節聚餐',line_roas:8.00,edm_roas:0,auto_roas:null,total_roas:8.00,cost:10197,rev:81566,act_rev:21449,repurchase:null,new_order:null,
+    posts:[
+      {ch:'LINE',date:'12/02',name:'1202 年末感謝祭',members:5671,open:39.5,click:1.3,rev:13525,roas:11.92},
+      {ch:'LINE',date:'12/05',name:'1205 暖心湯品2',members:5691,open:34.9,click:0.8,rev:4666,roas:4.10},
+      {ch:'LINE',date:'12/07',name:'1207 過節聚餐',members:5698,open:35.5,click:0.8,rev:6602,roas:5.79},
+      {ch:'LINE',date:'12/11',name:'1211 年末感謝祭2',members:5764,open:36.3,click:1.3,rev:15335,roas:13.30},
+      {ch:'LINE',date:'12/15',name:'1215 會員日',members:5787,open:39.5,click:2.2,rev:8931,roas:7.72},
+      {ch:'LINE',date:'12/18',name:'1218 暖身開胃',members:5809,open:33.7,click:0.9,rev:19192,roas:16.52},
+      {ch:'LINE',date:'12/24',name:'1224 過節聚餐2',members:5892,open:33.2,click:0.5,rev:7833,roas:6.65},
+      {ch:'LINE',date:'12/26',name:'1226 模範生日報',members:5896,open:33.2,click:0.5,rev:5482,roas:4.65},
+    ]
+  },
+  '2025.06':{label:'25.06',month:'6月',year:2025,theme:'麻辣臭豆腐・免運・解凍',line_roas:2.50,edm_roas:3.50,auto_roas:12.57,total_roas:3.53,cost:13946,rev:49259,act_rev:null,repurchase:30.7,new_order:61.2,
+    posts:[
+      {ch:'LINE',date:'06/12',name:'麻辣臭豆腐',members:7404,open:null,click:1.6,rev:7124,roas:2.41},
+      {ch:'LINE',date:'06/19',name:'創意料理：檸檬胡椒豚肉燒',members:7383,open:null,click:0.2,rev:0,roas:0},
+      {ch:'LINE',date:'06/26',name:'24hr 快閃免運',members:7409,open:null,click:1.4,rev:15965,roas:5.40},
+      {ch:'LINE',date:'07/03',name:'解凍不麻煩',members:7438,open:null,click:0.2,rev:6542,roas:2.21},
+      {ch:'EDM',date:'06/01',name:'EDM：露營/網紅推薦',members:3677,open:29.5,click:1.3,rev:2573,roas:3.50},
+    ]
+  },
+  '2025.07':{label:'25.07',month:'7月',year:2025,theme:'梅醬唐揚炸雞・老會員回娘家',line_roas:0.83,edm_roas:0.01,auto_roas:null,total_roas:0.78,cost:12894,rev:10003,act_rev:null,repurchase:33.0,new_order:60.6,
+    posts:[
+      {ch:'LINE',date:'07/09',name:'酸甜風味：梅醬唐揚炸雞',members:7404,open:19.8,click:1.0,rev:6076,roas:2.06},
+      {ch:'LINE',date:'07/15',name:'老朋友回娘家 今天下單最划算',members:7558,open:19.9,click:1.1,rev:0,roas:0},
+      {ch:'LINE',date:'07/26',name:'週末限定 LINE 好友加購優惠',members:7581,open:22.0,click:1.3,rev:3922,roas:1.30},
+      {ch:'LINE',date:'07/30',name:'越晚越嘴饞：紅杉熱炒烏龍麵',members:7587,open:11.4,click:0.0,rev:0,roas:0},
+    ]
+  },
+  '2025.08':{label:'25.08',month:'8月',year:2025,theme:'LINE刮刮樂・老會員回娘家',line_roas:2.44,edm_roas:5.04,auto_roas:null,total_roas:2.60,cost:12984,rev:33785,act_rev:null,repurchase:36.0,new_order:69.5,
+    posts:[
+      {ch:'LINE',date:'08/04',name:'LINE 好友限定刮刮樂',members:7573,open:null,click:3.2,rev:13136,roas:4.35},
+      {ch:'LINE',date:'08/15',name:'老會員回娘家',members:7616,open:19.1,click:0.9,rev:12625,roas:0},
+      {ch:'LINE',date:'08/20',name:'飲控必備：菲力雞排＋蔬菜',members:7612,open:13.1,click:0.0,rev:0,roas:0},
+      {ch:'LINE',date:'08/30',name:'週末限定！懶人組合現折 80',members:7649,open:22.2,click:0.8,rev:3973,roas:1.31},
+    ]
+  },
+  '2025.09':{label:'25.09',month:'9月',year:2025,theme:'夜貓子福利・會員日・不限金額點數2倍',line_roas:2.77,edm_roas:0.01,auto_roas:null,total_roas:2.58,cost:13130,rev:33884,act_rev:null,repurchase:34.9,new_order:66.8,
+    posts:[
+      {ch:'LINE',date:'09/02',name:'夜貓子福利：滿$1499免運',members:7659,open:21.3,click:0.7,rev:2318,roas:0.76},
+      {ch:'LINE',date:'09/08',name:'72hr限定 LINE好友專屬',members:7616,open:22.6,click:2.1,rev:12036,roas:0},
+      {ch:'LINE',date:'09/15',name:'不限金額點數 2 倍送',members:7612,open:21.9,click:0.9,rev:19519,roas:6.43},
+      {ch:'LINE',date:'09/20',name:'烤肉不用等節日：多種料理方式',members:7649,open:null,click:0.2,rev:0,roas:0},
+    ]
+  },
+  '2025.10':{label:'25.10',month:'10月',year:2025,theme:'LINE刮刮樂・點數2倍・義式料理',line_roas:1.69,edm_roas:0.07,auto_roas:null,total_roas:1.65,cost:12721,rev:20932,act_rev:null,repurchase:40.4,new_order:61.9,
+    posts:[
+      {ch:'LINE',date:'10/04',name:'LINE 好友限定！刮刮樂',members:7720,open:25.9,click:0.0,rev:6023,roas:1.96},
+      {ch:'LINE',date:'10/15',name:'今天消費點數 2 倍送',members:7743,open:22.8,click:0.8,rev:13834,roas:4.48},
+      {ch:'LINE',date:'10/23',name:'不用飛出國：義大利料理',members:7761,open:23.6,click:0.7,rev:0,roas:0},
+      {ch:'LINE',date:'10/29',name:'一分鐘宅料理：蠔油香菇雞丁',members:7754,open:11.9,click:0.0,rev:1053,roas:0.34},
+    ]
+  },
+  '2025.11':{label:'25.11',month:'11月',year:2025,theme:'72hr限定・老會員回娘家・麻油香',line_roas:1.47,edm_roas:2.60,auto_roas:null,total_roas:1.57,cost:13616,rev:21367,act_rev:null,repurchase:42.0,new_order:60.0,
+    posts:[
+      {ch:'LINE',date:'11/07',name:'72hr限定 LINE好友專屬',members:7765,open:23.1,click:1.6,rev:13308,roas:4.31},
+      {ch:'LINE',date:'11/15',name:'老會員回娘家 專屬回饋日',members:7772,open:22.5,click:0.9,rev:0,roas:0},
+      {ch:'LINE',date:'11/21',name:'味噌香氣：日式暖心料理',members:7761,open:21.5,click:0.3,rev:2878,roas:0.93},
+      {ch:'LINE',date:'11/27',name:'一分鐘宅料理：麻油香開煮',members:7754,open:7.8,click:0.0,rev:2076,roas:0.67},
+    ]
+  },
+  '2025.12':{label:'25.12',month:'12月',year:2025,theme:'72hr任選・老會員回娘家・新品上市',line_roas:1.74,edm_roas:0.02,auto_roas:null,total_roas:1.61,cost:13499,rev:21700,act_rev:null,repurchase:38.1,new_order:63.3,
+    posts:[
+      {ch:'LINE',date:'12/05',name:'72hr限定任選活動',members:7763,open:23.2,click:1.3,rev:5556,roas:1.80},
+      {ch:'LINE',date:'12/15',name:'老會員回娘家 專屬回饋日',members:7777,open:21.0,click:0.9,rev:9802,roas:3.17},
+      {ch:'LINE',date:'12/22',name:'全新品：紅燒牛刀削麵限時優惠',members:7804,open:23.6,click:1.1,rev:6319,roas:2.04},
+      {ch:'LINE',date:'12/30',name:'水煮白肉佐蒜泥醬：輕盈上線',members:7823,open:13.3,click:0.4,rev:0,roas:0},
+    ]
+  },
+  '2026.01':{label:'26.01',month:'1月',year:2026,theme:'24hr快閃・老會員・過年加菜',line_roas:2.74,edm_roas:1.79,auto_roas:null,total_roas:2.66,cost:13905,rev:36933,act_rev:null,repurchase:22.5,new_order:68.6,
+    posts:[
+      {ch:'LINE',date:'01/10',name:'限時24hr快閃免運日',members:7867,open:24.0,click:1.3,rev:15654,roas:5.00},
+      {ch:'LINE',date:'01/15',name:'老會員回娘家 專屬回饋日',members:7879,open:28.4,click:4.3,rev:3799,roas:1.21},
+      {ch:'LINE',date:'01/20',name:'這個過年，紅杉幫你多加一道菜',members:7917,open:29.2,click:8.5,rev:13187,roas:4.18},
+      {ch:'LINE',date:'01/28',name:'一分鐘宅料理：無敵紅糟肉',members:7989,open:25.2,click:2.1,rev:2063,roas:0.65},
+      {ch:'EDM',date:'01/01',name:'EDM：一月電子報',members:5048,open:22.0,click:2.5,rev:2230,roas:1.79},
+    ]
+  },
+  '2026.02':{label:'26.02',month:'2月',year:2026,theme:'訂閱制開跑・週末小確幸・臭豆腐',line_roas:2.64,edm_roas:6.41,auto_roas:null,total_roas:2.99,cost:14240,rev:42533,act_rev:null,repurchase:29.2,new_order:73.5,
+    posts:[
+      {ch:'LINE',date:'02/02',name:'紅杉美食訂閱制開跑',members:7989,open:25.5,click:1.6,rev:11393,roas:3.57},
+      {ch:'LINE',date:'02/07',name:'週末限定：小確幸來了',members:8087,open:24.8,click:2.2,rev:11411,roas:3.53},
+      {ch:'LINE',date:'02/23',name:'熱辣臭豆腐＋Q彈拉麵',members:8120,open:31.9,click:4.1,rev:8019,roas:2.46},
+      {ch:'LINE',date:'02/25',name:'一分鐘宅料理：熟鐵牛柳',members:8096,open:28.7,click:4.0,rev:3221,roas:0.99},
+      {ch:'EDM',date:'02/01',name:'EDM：二月電子報',members:5699,open:25.5,click:1.5,rev:8489,roas:6.41},
+    ]
+  },
+  '2026.03':{label:'26.03',month:'3月',year:2026,theme:'開學季幸運轉盤・會員日・秘密優惠',line_roas:3.20,edm_roas:0,auto_roas:120.04,total_roas:9.29,cost:15071,rev:139955,act_rev:null,repurchase:22.6,new_order:57.7,
+    posts:[
+      {ch:'LINE',date:'03/06',name:'3月開學季 ✦ 幸運轉盤',members:8127,open:28.2,click:0.0,rev:15078,roas:4.64},
+      {ch:'LINE',date:'03/15',name:'紅杉會員日 ✦ 老會員回娘家',members:8182,open:29.3,click:5.3,rev:10624,roas:3.25},
+      {ch:'LINE',date:'03/20',name:'LINE 好友專屬 ✦ 秘密優惠',members:8223,open:32.5,click:10.1,rev:14272,roas:4.34},
+      {ch:'LINE',date:'03/30',name:'一分鐘宅料理：蜜香咕咾肉',members:8256,open:24.5,click:0.8,rev:1981,roas:0.60},
+      {ch:'EDM',date:'03/01',name:'EDM：馬上加菜/會員日/訂閱制',members:5699,open:20.0,click:2.2,rev:0,roas:0},
+    ]
+  },
+};
+
+// ─── CHART DATA ───────────────────────────────────────────
+const ALL_MONTHS = Object.keys(DATA);
+const chartLabels = ALL_MONTHS.map(k => DATA[k].label);
+const allRoas  = ALL_MONTHS.map(k => DATA[k].total_roas);
+const lineRoas = ALL_MONTHS.map(k => DATA[k].line_roas);
+const edmRoas  = ALL_MONTHS.map(k => DATA[k].edm_roas);
+const autoRoas = ALL_MONTHS.map(k => DATA[k].auto_roas);
+
+// ─── MAIN ROAS CHART ──────────────────────────────────────
+const roasCtx = document.getElementById('roasChart').getContext('2d');
+const roasChart = new Chart(roasCtx, {
+  type: 'line',
+  data: {
+    labels: chartLabels,
+    datasets: [
+      {id:'all', label:'全渠道', data: allRoas,
+        borderColor:'#C84B31', backgroundColor:'rgba(200,75,49,.08)',
+        borderWidth:2.5, pointRadius:3, pointHoverRadius:5, tension:.3, fill:true},
+      {id:'line', label:'LINE', data: lineRoas,
+        borderColor:'#06C755', backgroundColor:'transparent',
+        borderWidth:2, pointRadius:2.5, tension:.3},
+      {id:'edm', label:'EDM', data: edmRoas,
+        borderColor:'#0B6E99', backgroundColor:'transparent',
+        borderWidth:2, pointRadius:2.5, tension:.3, borderDash:[5,3]},
+      {id:'auto', label:'自動化（上限 20 顯示）', data: autoRoas.map(v => v ? Math.min(v, 20) : null),
+        borderColor:'#7B5EA7', backgroundColor:'transparent',
+        borderWidth:2, pointRadius:3, tension:.3, borderDash:[3,3],
+        spanGaps: false},
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom', labels:{boxWidth:12,font:{size:12}}},
+      tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2)}x`}}
+    },
+    scales:{
+      x:{grid:{color:'#F0EDE8'}, ticks:{font:{size:10}, maxTicksLimit:15}},
+      y:{grid:{color:'#F0EDE8'}, beginAtZero:true, suggestedMax:15,
+         ticks:{callback:v=>`${v}x`}}
+    }
+  }
+});
+
+function toggleLine(id, btn) {
+  const map = {all:0, line:1, edm:2, auto:3};
+  const ds = roasChart.data.datasets[map[id]];
+  ds.hidden = !ds.hidden;
+  btn.classList.toggle('active');
+  roasChart.update();
+}
+
+// ─── YEAR CHARTS ─────────────────────────────────────────
+function makeYearChart(canvasId, months) {
+  const d = months.map(k => DATA[k]);
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  return new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: d.map(x=>x.month),
+      datasets:[
+        {label:'全渠道', data:d.map(x=>x.total_roas), borderColor:'#C84B31', backgroundColor:'rgba(200,75,49,.08)', borderWidth:2.5, pointRadius:4, tension:.3, fill:true},
+        {label:'LINE', data:d.map(x=>x.line_roas), borderColor:'#06C755', backgroundColor:'transparent', borderWidth:2, pointRadius:3, tension:.3},
+        {label:'EDM', data:d.map(x=>x.edm_roas), borderColor:'#0B6E99', backgroundColor:'transparent', borderWidth:2, pointRadius:3, tension:.3, borderDash:[5,3]},
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom', labels:{boxWidth:12,font:{size:12}}},
+               tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2)}x`}}},
+      scales:{
+        x:{grid:{color:'#F0EDE8'}, ticks:{font:{size:12}}},
+        y:{grid:{color:'#F0EDE8'}, beginAtZero:true, suggestedMax:12, ticks:{callback:v=>`${v}x`}}
+      }
+    }
+  });
+}
+
+// ─── TABLE BUILDERS ──────────────────────────────────────
+function roasClass(v) {
+  if (!v || v===0) return 'roas-lo';
+  if (v >= 5) return 'roas-hi';
+  if (v >= 2) return 'roas-ok';
+  return 'roas-lo';
+}
+function fmt(n, prefix='') {
+  if (n === null || n === undefined) return '—';
+  return prefix + n.toLocaleString();
+}
+function pct(v) { return v !== null && v !== undefined ? v.toFixed(1)+'%' : '—'; }
+
+function buildDetailInner(posts) {
+  const rows = posts.map(p => `
+    <tr>
+      <td><span class="tag tag-${p.ch==='LINE'?'green':p.ch==='EDM'?'blue':'purple'}">${p.ch}</span></td>
+      <td>${p.date}</td>
+      <td>${p.name}</td>
+      <td class="num">${p.members ? p.members.toLocaleString() : '—'}</td>
+      <td class="num">${p.open !== null ? p.open.toFixed(1)+'%' : '—'}</td>
+      <td class="num">${p.click !== null ? p.click.toFixed(1)+'%' : '—'}</td>
+      <td class="num">$${p.rev.toLocaleString()}</td>
+      <td class="num ${roasClass(p.roas)}">${p.roas ? p.roas.toFixed(2) : '—'}</td>
+    </tr>`).join('');
+  return `<table>
+    <thead><tr><th>渠道</th><th>日期</th><th>主題</th><th class="num">名單</th><th class="num">開信</th><th class="num">點擊</th><th class="num">業績</th><th class="num">ROAS</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function buildOldTable(bodyId, months) {
+  const tbody = document.getElementById(bodyId);
+  months.forEach((k,i) => {
+    const d = DATA[k];
+    const rid = `r${bodyId}${i}`;
+    const did = `d${bodyId}${i}`;
+    const mainRow = document.createElement('tr');
+    mainRow.className = 'month-row';
+    mainRow.innerHTML = `
+      <td><span class="expand-btn" onclick="toggleRow('${rid}','${did}')">
+        <span class="expand-icon" id="ei_${rid}">▶</span> ${d.label}
+      </span></td>
+      <td>${d.theme}</td>
+      <td class="num ${roasClass(d.line_roas)}">${d.line_roas ? d.line_roas.toFixed(2)+'x' : '—'}</td>
+      <td class="num">$${d.cost.toLocaleString()}</td>
+      <td class="num">$${d.rev.toLocaleString()}</td>
+      <td class="num">${d.act_rev ? '$'+d.act_rev.toLocaleString() : '—'}</td>
+      <td class="num">—</td><td class="num">—</td>
+      <td></td>
+    `;
+    tbody.appendChild(mainRow);
+    const detailRow = document.createElement('tr');
+    detailRow.id = did;
+    detailRow.className = 'detail-row';
+    detailRow.innerHTML = `<td class="detail-cell" colspan="9"><div class="detail-inner">${buildDetailInner(d.posts)}</div></td>`;
+    tbody.appendChild(detailRow);
+  });
+}
+
+function buildNewTable(bodyId, months) {
+  const tbody = document.getElementById(bodyId);
+  months.forEach((k,i) => {
+    const d = DATA[k];
+    const rid = `r${bodyId}${i}`;
+    const did = `d${bodyId}${i}`;
+    const mainRow = document.createElement('tr');
+    mainRow.className = 'month-row';
+    mainRow.innerHTML = `
+      <td><span class="expand-btn" onclick="toggleRow('${rid}','${did}')">
+        <span class="expand-icon" id="ei_${rid}">▶</span> ${d.label}
+      </span></td>
+      <td class="num ${roasClass(d.total_roas)}">${d.total_roas ? d.total_roas.toFixed(2)+'x' : '—'}</td>
+      <td class="num ${roasClass(d.line_roas)}">${d.line_roas ? d.line_roas.toFixed(2)+'x' : '—'}</td>
+      <td class="num ${roasClass(d.edm_roas)}">${d.edm_roas ? d.edm_roas.toFixed(2)+'x' : '—'}</td>
+      <td class="num">$${d.cost.toLocaleString()}</td>
+      <td class="num">$${d.rev.toLocaleString()}</td>
+      <td class="num">${pct(d.repurchase)}</td>
+      <td class="num">${pct(d.new_order)}</td>
+      <td></td>
+    `;
+    tbody.appendChild(mainRow);
+    const detailRow = document.createElement('tr');
+    detailRow.id = did;
+    detailRow.className = 'detail-row';
+    detailRow.innerHTML = `<td class="detail-cell" colspan="9"><div class="detail-inner">${buildDetailInner(d.posts)}</div></td>`;
+    tbody.appendChild(detailRow);
+  });
+}
+
+function toggleRow(rid, did) {
+  const dr = document.getElementById(did);
+  const ic = document.getElementById('ei_'+rid);
+  const isOpen = dr.classList.contains('open');
+  dr.classList.toggle('open', !isOpen);
+  ic.textContent = isOpen ? '▶' : '▼';
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+const months2023 = ['2023.10','2023.11','2023.12'];
+const months2024 = ['2024.01','2024.02','2024.03','2024.04','2024.05','2024.06',
+                    '2024.07','2024.08','2024.09','2024.10','2024.11','2024.12'];
+const months2025 = ['2025.06','2025.07','2025.08','2025.09','2025.10','2025.11','2025.12'];
+const months2026 = ['2026.01','2026.02','2026.03'];
+
+buildOldTable('body2023', months2023);
+buildOldTable('body2024', months2024);
+buildNewTable('body2025', months2025);
+buildNewTable('body2026', months2026);
+
+// Charts initialized lazily (only when tab is shown)
+const yearCharts = {};
+function initYearChart(year, months, canvasId) {
+  if (!yearCharts[year]) {
+    yearCharts[year] = makeYearChart(canvasId, months);
+  }
+}
+
+// ─── TAB SWITCHING ────────────────────────────────────────
+function showTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if (el) el.classList.add('active');
+
+  if (id==='y2023') initYearChart(2023, months2023, 'chart2023');
+  if (id==='y2024') initYearChart(2024, months2024, 'chart2024');
+  if (id==='y2025') initYearChart(2025, months2025, 'chart2025');
+  if (id==='y2026') initYearChart(2026, months2026, 'chart2026');
+}
+
+// ─── SUB-TABS ─────────────────────────────────────────────
+function showSub(panelId, btn, groupId) {
+  const parent = btn.closest('.card');
+  parent.querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('active'));
+  parent.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
