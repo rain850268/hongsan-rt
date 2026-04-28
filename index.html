@@ -153,6 +153,8 @@ code{background:#F0ECEB;padding:2px 6px;border-radius:4px;font-family:monospace;
 .line-strategy li{padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6;list-style:none;}
 .line-strategy li:last-child{border-bottom:none;}
 .price-tag{font-weight:700;color:var(--pri);}
+.collapse-toggle{margin-left:8px;padding:3px 10px;border:1px solid var(--border);border-radius:99px;background:var(--card);cursor:pointer;font-size:11px;font-weight:500;color:var(--pri-light);transition:all .2s;}
+.collapse-toggle:hover{background:var(--bg);}
 </style>
 </head>
 <body>
@@ -280,6 +282,25 @@ code{background:#F0ECEB;padding:2px 6px;border-radius:4px;font-family:monospace;
           <tr style="background:#F5F2F0;font-weight:700"><td>合計</td><td class="num">424</td><td class="num">23</td><td class="num">$47,954</td></tr>
         </tbody>
       </table></div>
+    </div>
+  </div>
+
+  <div class="card mb20" id="auto-cumulative-card">
+    <div class="section-title">🤖 自動化腳本累積成效
+      <span class="updated">2026.03 起累計</span>
+      <button class="collapse-toggle" id="auto-toggle-btn" onclick="toggleAutoBlock()">▲ 收起</button>
+    </div>
+    <div id="auto-block-content">
+      <div class="tbl-scroll"><table>
+        <thead><tr>
+          <th>腳本</th><th>渠道</th>
+          <th class="num">累計觸及</th><th class="num">累計訂單</th>
+          <th class="num">累計業績</th><th class="num">累計花費</th>
+          <th class="num">ROAS</th><th></th>
+        </tr></thead>
+        <tbody id="auto-cumulative-body"></tbody>
+      </table></div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px;">* 自動化行銷自 2026.03 起啟用完整追蹤，花費計算為訊息成本（LINE 0.4元／人、SMS 1元／人、EDM 0.2元／人）</p>
     </div>
   </div>
 
@@ -904,6 +925,98 @@ const DATA = {
   },
 };
 
+// ─── AUTO SCRIPT CUMULATIVE DATA ────────────────────────────
+const AUTO_CUM_DATA = [
+  {section:'自動化流程（觸發型）', name:'新客流程', ch:['LINE','SMS'],
+   reach:674, orders:18, rev:27782, cost:287,
+   months:[{m:'2026.03', reach:674, orders:18, rev:27782, cost:287}]},
+  {name:'剛完成下單', ch:['LINE','EDM'],
+   reach:117, orders:1, rev:1896, cost:47,
+   months:[{m:'2026.03', reach:117, orders:1, rev:1896, cost:47}]},
+  {name:'購物車挽回', ch:['LINE','SMS'],
+   reach:281, orders:3, rev:5457, cost:150,
+   months:[{m:'2026.03', reach:281, orders:3, rev:5457, cost:150}]},
+  {name:'訂閱制', ch:['LINE'],
+   reach:39, orders:0, rev:0, cost:15,
+   months:[{m:'2026.03', reach:39, orders:0, rev:0, cost:15}]},
+  {name:'活動再行銷', ch:['LINE'],
+   reach:9, orders:null, rev:null, cost:4,
+   months:[{m:'2026.03', reach:9, orders:null, rev:null, cost:4}]},
+  {section:'舊客溝通（每月推播）', name:'生日會員', ch:['LINE'],
+   reach:23, orders:0, rev:0, cost:9,
+   months:[{m:'2026.03', reach:23, orders:0, rev:0, cost:9}]},
+  {name:'潛在忠誠每月優惠', ch:['LINE'],
+   reach:157, orders:4, rev:8740, cost:63,
+   months:[{m:'2026.03', reach:157, orders:4, rev:8740, cost:63}]},
+  {name:'開發型回鍋推播', ch:['LINE'],
+   reach:53, orders:4, rev:5612, cost:21,
+   months:[{m:'2026.03', reach:53, orders:4, rev:5612, cost:21}]},
+  {name:'黃金會員日', ch:['LINE'],
+   reach:225, orders:19, rev:45709, cost:90,
+   months:[{m:'2026.03', reach:225, orders:19, rev:45709, cost:90}]},
+  {name:'沈睡會員喚回', ch:['LINE','SMS'],
+   reach:285, orders:0, rev:0, cost:114,
+   months:[{m:'2026.03', reach:285, orders:0, rev:0, cost:114}]},
+  {section:'購物車再行銷', name:'未加入購物車（6hrs）', ch:['LINE'],
+   reach:122, orders:1, rev:2804, cost:49,
+   months:[{m:'2026.03', reach:122, orders:1, rev:2804, cost:49}]},
+];
+
+function buildAutoCumulative() {
+  const tbody = document.getElementById('auto-cumulative-body');
+  if (!tbody || tbody.children.length > 0) return;
+  AUTO_CUM_DATA.forEach((d, i) => {
+    if (d.section) {
+      const s = document.createElement('tr');
+      s.className = 'tbl-section';
+      s.innerHTML = `<td colspan="8">${d.section}</td>`;
+      tbody.appendChild(s);
+    }
+    const roas = (d.rev && d.cost) ? d.rev/d.cost : null;
+    const did = `dac${i}`, rid = `rac${i}`;
+    const chs = d.ch.map(c=>`<span class="tag tag-${c==='LINE'?'green':c==='SMS'?'gray':'blue'}">${c}</span>`).join(' ');
+    const mr = document.createElement('tr');
+    mr.className = 'month-row';
+    mr.innerHTML = `
+      <td><span class="expand-btn" onclick="toggleRow('${rid}','${did}')">
+        <span class="expand-icon" id="ei_${rid}">▶</span> ${d.name}
+      </span></td>
+      <td>${chs}</td>
+      <td class="num">${d.reach ? d.reach.toLocaleString() : '—'}</td>
+      <td class="num">${d.orders !== null ? d.orders : '—'}</td>
+      <td class="num">${d.rev !== null ? '$'+d.rev.toLocaleString() : '—'}</td>
+      <td class="num">$${d.cost.toLocaleString()}</td>
+      <td class="num ${roas ? roasClass(roas) : ''}">${roas ? roas.toFixed(1) : '—'}</td>
+      <td></td>`;
+    tbody.appendChild(mr);
+    const monthRows = d.months.map(m => {
+      const mr2 = (m.rev && m.cost) ? m.rev/m.cost : null;
+      return `<tr>
+        <td>${m.m}</td>
+        <td class="num">${m.reach ? m.reach.toLocaleString() : '—'}</td>
+        <td class="num">${m.orders !== null ? m.orders : '—'}</td>
+        <td class="num">${m.rev !== null ? '$'+m.rev.toLocaleString() : '—'}</td>
+        <td class="num">$${m.cost.toLocaleString()}</td>
+        <td class="num ${mr2 ? roasClass(mr2) : ''}">${mr2 ? mr2.toFixed(1) : '—'}</td>
+      </tr>`;
+    }).join('');
+    const dr = document.createElement('tr');
+    dr.id = did; dr.className = 'detail-row';
+    dr.innerHTML = `<td class="detail-cell" colspan="8"><div class="detail-inner">
+      <table><thead><tr><th>月份</th><th class="num">觸及</th><th class="num">訂單</th><th class="num">業績</th><th class="num">花費</th><th class="num">ROAS</th></tr></thead>
+      <tbody>${monthRows}</tbody></table></div></td>`;
+    tbody.appendChild(dr);
+  });
+}
+
+function toggleAutoBlock() {
+  const c = document.getElementById('auto-block-content');
+  const b = document.getElementById('auto-toggle-btn');
+  const hidden = c.style.display === 'none';
+  c.style.display = hidden ? '' : 'none';
+  b.textContent = hidden ? '▲ 收起' : '▼ 展開';
+}
+
 // ─── CHART DATA ───────────────────────────────────────────
 const ALL_MONTHS = Object.keys(DATA);
 const chartLabels = ALL_MONTHS.map(k => DATA[k].label);
@@ -1094,6 +1207,7 @@ buildOldTable('body2023', months2023);
 buildOldTable('body2024', months2024);
 buildNewTable('body2025', months2025);
 buildNewTable('body2026', months2026);
+buildAutoCumulative();
 
 const yearCharts = {};
 function initYearChart(year, months, canvasId) {
