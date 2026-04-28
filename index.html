@@ -7,10 +7,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --pri:#3D3535;--pri-light:#7A7070;--accent:#C2908B;--accent2:#D4B8B4;
-  --bg:#F7F5F3;--card:#fff;--border:#E6DFDB;
-  --text:#3D3535;--muted:#9E9490;
-  --green:#0F7B6C;--red:#C84B31;--amber:#936800;--blue:#0B6E99;--purple:#7B5EA7;
+  --pri:#482622;--pri-light:#7A5550;--accent:#E8493F;--accent2:#F5C5C3;
+  --bg:#FBF7F5;--card:#fff;--border:#EAD8D5;--brand-light:#FCEADF;
+  --text:#482622;--muted:#9E8480;
+  --green:#0F7B6C;--red:#C0392B;--amber:#936800;--blue:#0B6E99;--purple:#7B5EA7;
   --line-green:#06C755;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -155,6 +155,37 @@ code{background:#F0ECEB;padding:2px 6px;border-radius:4px;font-family:monospace;
 .price-tag{font-weight:700;color:var(--pri);}
 .collapse-toggle{margin-left:8px;padding:3px 10px;border:1px solid var(--border);border-radius:99px;background:var(--card);cursor:pointer;font-size:11px;font-weight:500;color:var(--pri-light);transition:all .2s;}
 .collapse-toggle:hover{background:var(--bg);}
+
+/* Auto script grouped tables */
+.auto-group{margin-bottom:20px;}
+.auto-group:last-child{margin-bottom:0;}
+.auto-group-hd{font-size:12px;font-weight:700;color:var(--pri);padding:8px 12px;
+  background:var(--brand-light);border-radius:8px 8px 0 0;
+  border:1px solid var(--border);border-bottom:none;display:flex;align-items:center;gap:8px;}
+.auto-group .tbl-scroll{border:1px solid var(--border);border-radius:0 0 8px 8px;overflow:hidden;}
+.subtotal-row td{background:#F5EEEC;font-weight:700;font-size:12px;border-top:2px solid var(--border)!important;}
+.subtotal-row td:first-child{color:var(--muted);letter-spacing:.3px;}
+
+/* Ops visual cards */
+.auto-flow-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.auto-trigger{background:var(--accent);color:#fff;padding:12px 16px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:10px;}
+.auto-trigger-icon{font-size:18px;line-height:1;}
+.auto-trigger-sub{font-size:10px;opacity:.8;font-weight:400;margin-top:2px;}
+.auto-flow-label{padding:10px 16px 2px;font-size:12px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.4px;}
+.auto-steps{padding:4px 16px 12px;display:flex;flex-direction:column;}
+.auto-step{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);align-items:center;}
+.auto-step:last-child{border-bottom:none;}
+.auto-step-timing{font-size:11px;color:var(--muted);font-weight:600;min-width:100px;flex-shrink:0;}
+.auto-step-content{flex:1;font-size:13px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.rt-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.rt-card-hd{padding:14px 16px;background:var(--brand-light);border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;}
+.rt-icon{font-size:22px;line-height:1.2;}
+.rt-name{font-weight:700;font-size:14px;color:var(--pri);margin-bottom:3px;}
+.rt-desc{font-size:12px;color:var(--pri-light);line-height:1.6;}
+.rt-actions{padding:8px 16px;display:flex;flex-direction:column;}
+.rt-action{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;flex-wrap:wrap;}
+.rt-action:last-child{border-bottom:none;}
+.rt-action-when{font-size:11px;font-weight:700;color:var(--accent);min-width:78px;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -235,41 +266,108 @@ code{background:#F0ECEB;padding:2px 6px;border-radius:4px;font-family:monospace;
     </div>
 
     <div id="auto2603" class="sub-panel">
-      <div class="tbl-scroll"><table>
-        <thead><tr><th>流程</th><th>渠道</th><th class="num">觸及</th><th class="num">開信率</th><th class="num">點擊率</th><th class="num">訂單</th><th class="num">業績</th><th class="num">花費</th></tr></thead>
-        <tbody>
-          <tr class="tbl-section"><td colspan="8">自動化流程（官網後台數據）</td></tr>
-          <tr class="tbl-group"><td colspan="8">新客流程</td></tr>
-          <tr><td>新客｜免運</td><td><span class="tag tag-green">LINE</span></td><td class="num">339</td><td class="num">100.9%</td><td class="num">36.8%</td><td class="num">16</td><td class="num">$25,384</td><td class="num">$136</td></tr>
-          <tr><td>新客｜三天後未下單</td><td><span class="tag tag-green">LINE</span></td><td class="num">307</td><td class="num">68.7%</td><td class="num">25.6%</td><td class="num">2</td><td class="num">$2,398</td><td class="num">$123</td></tr>
-          <tr><td>新客｜組合包倒數提醒</td><td><span class="tag tag-gray">SMS</span></td><td class="num">28</td><td class="num">—</td><td class="num">35.7%</td><td class="num">—</td><td class="num">—</td><td class="num">$28</td></tr>
-          <tr class="tbl-group"><td colspan="8">剛完成下單流程</td></tr>
-          <tr><td>剛完成下單－第一步</td><td><span class="tag tag-green">LINE</span></td><td class="num">52</td><td class="num">94.2%</td><td class="num">16.3%</td><td class="num">0</td><td class="num">$0</td><td class="num">$21</td></tr>
-          <tr><td>提醒解凍方法</td><td><span class="tag tag-blue">EDM</span></td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="num">0</td><td class="num">$0</td><td class="num">$0</td></tr>
-          <tr><td>提供創意料理＋一分鐘宅料理頻道＋網紅推薦文章</td><td><span class="tag tag-blue">EDM</span></td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="num">0</td><td class="num">$0</td><td class="num">$0</td></tr>
-          <tr><td>剛完成下單｜回購推薦碼</td><td><span class="tag tag-green">LINE</span></td><td class="num">46</td><td class="num">60.9%</td><td class="num">25.0%</td><td class="num">1</td><td class="num">$1,896</td><td class="num">$18</td></tr>
-          <tr><td>剛完成下單｜推薦定期組</td><td><span class="tag tag-green">LINE</span></td><td class="num">19</td><td class="num">63.2%</td><td class="num">25.0%</td><td class="num">0</td><td class="num">$0</td><td class="num">$8</td></tr>
-          <tr class="tbl-group"><td colspan="8">購物車挽回</td></tr>
-          <tr><td>購物車｜未結帳挽回</td><td><span class="tag tag-green">LINE</span></td><td class="num">219</td><td class="num">79.5%</td><td class="num">29.3%</td><td class="num">3</td><td class="num">$5,457</td><td class="num">$88</td></tr>
-          <tr><td>發送 SMS</td><td><span class="tag tag-gray">SMS</span></td><td class="num">62</td><td class="num">—</td><td class="num">82.3%</td><td class="num">0</td><td class="num">$0</td><td class="num">$62</td></tr>
-          <tr class="tbl-group"><td colspan="8">訂閱制</td></tr>
-          <tr><td>訂閱制｜未加入購物車提醒</td><td><span class="tag tag-green">LINE</span></td><td class="num">36</td><td class="num">61.1%</td><td class="num">22.7%</td><td class="num">0</td><td class="num">$0</td><td class="num">$14</td></tr>
-          <tr><td>訂閱制｜未加入購物車 3 天</td><td><span class="tag tag-green">LINE</span></td><td class="num">3</td><td class="num">33.3%</td><td class="num">0%</td><td class="num">0</td><td class="num">$0</td><td class="num">$1</td></tr>
-          <tr class="tbl-group"><td colspan="8">活動再行銷</td></tr>
-          <tr><td>活動未加入購物車</td><td><span class="tag tag-green">LINE</span></td><td class="num">9</td><td class="num">33.3%</td><td class="num">33.3%</td><td class="num">—</td><td class="num">—</td><td class="num">$4</td></tr>
-          <tr class="tbl-group"><td colspan="8">舊客沈睡喚回（SMS 腳本）</td></tr>
-          <tr><td>舊客｜開發型客戶（未瀏覽）</td><td><span class="tag tag-gray">SMS</span></td><td class="num">0</td><td class="num">0%</td><td class="num">0%</td><td class="num">0</td><td class="num">$0</td><td class="num">$0</td></tr>
-          <tr><td>舊客｜沈睡會員（未開封）</td><td><span class="tag tag-gray">SMS</span></td><td class="num">0</td><td class="num">0%</td><td class="num">0%</td><td class="num">0</td><td class="num">$0</td><td class="num">$0</td></tr>
-          <tr class="tbl-section"><td colspan="8">舊客溝通（官網後台數據）</td></tr>
-          <tr><td>03/05 生日月</td><td><span class="tag tag-green">LINE</span></td><td class="num">23</td><td class="num">30.4%</td><td class="num">14.3%</td><td class="num">0</td><td class="num">$0</td><td class="num">$9</td></tr>
-          <tr><td>03/05 每月優惠（潛在忠誠會員）</td><td><span class="tag tag-green">LINE</span></td><td class="num">157</td><td class="num">32.5%</td><td class="num">7.8%</td><td class="num">4</td><td class="num">$8,740</td><td class="num">$63</td></tr>
-          <tr><td>03/10 回鍋組（開發型客戶）</td><td><span class="tag tag-green">LINE</span></td><td class="num">53</td><td class="num">45.3%</td><td class="num">12.5%</td><td class="num">4</td><td class="num">$5,612</td><td class="num">$21</td></tr>
-          <tr><td>03/20 黃金會員日（忠誠會員）</td><td><span class="tag tag-green">LINE</span></td><td class="num">225</td><td class="num">46.7%</td><td class="num">28.6%</td><td class="num">19</td><td class="num">$45,709</td><td class="num">$90</td></tr>
-          <tr><td>03/31 回鍋組＋贈品炙燒里肌（沈睡會員）</td><td><span class="tag tag-green">LINE</span></td><td class="num">285</td><td class="num">20.7%</td><td class="num">0%</td><td class="num">0</td><td class="num">$0</td><td class="num">$114</td></tr>
-          <tr class="tbl-section"><td colspan="8">購物車再行銷</td></tr>
-          <tr><td>未加入購物車｜6 hrs（6/30 截止）</td><td><span class="tag tag-green">LINE</span></td><td class="num">122</td><td class="num">77.1%</td><td class="num">19.7%</td><td class="num">1</td><td class="num">$2,804</td><td class="num">$49</td></tr>
-        </tbody>
-      </table></div>
+
+      <div class="auto-group">
+        <div class="auto-group-hd">⚡ 新客流程</div>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>腳本</th><th>渠道</th><th class="num">觸及</th><th class="num">開信率</th><th class="num">點擊率</th><th class="num">訂單</th><th class="num">業績</th><th class="num">花費</th></tr></thead>
+          <tbody>
+            <tr><td>新客｜免運</td><td><span class="tag tag-green">LINE</span></td><td class="num">339</td><td class="num">100.9%</td><td class="num">36.8%</td><td class="num">16</td><td class="num">$25,384</td><td class="num">$136</td></tr>
+            <tr><td>新客｜三天後未下單</td><td><span class="tag tag-green">LINE</span></td><td class="num">307</td><td class="num">68.7%</td><td class="num">25.6%</td><td class="num">2</td><td class="num">$2,398</td><td class="num">$123</td></tr>
+            <tr><td>新客｜組合包倒數提醒</td><td><span class="tag tag-gray">SMS</span></td><td class="num">28</td><td class="num">—</td><td class="num">35.7%</td><td class="num">—</td><td class="num">—</td><td class="num">$28</td></tr>
+            <tr class="subtotal-row"><td>小計</td><td></td><td class="num">674</td><td class="num">—</td><td class="num">—</td><td class="num">18</td><td class="num roas-hi">$27,782</td><td class="num">$287</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="auto-group">
+        <div class="auto-group-hd">📦 剛完成下單流程</div>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>腳本</th><th>渠道</th><th class="num">觸及</th><th class="num">開信率</th><th class="num">點擊率</th><th class="num">訂單</th><th class="num">業績</th><th class="num">花費</th></tr></thead>
+          <tbody>
+            <tr><td>剛完成下單－第一步</td><td><span class="tag tag-green">LINE</span></td><td class="num">52</td><td class="num">94.2%</td><td class="num">16.3%</td><td class="num">0</td><td class="num">$0</td><td class="num">$21</td></tr>
+            <tr><td>提醒解凍方法</td><td><span class="tag tag-blue">EDM</span></td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="num">0</td><td class="num">$0</td><td class="num">$0</td></tr>
+            <tr><td>創意料理＋宅料理頻道</td><td><span class="tag tag-blue">EDM</span></td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="num">0</td><td class="num">$0</td><td class="num">$0</td></tr>
+            <tr><td>剛完成下單｜回購推薦碼</td><td><span class="tag tag-green">LINE</span></td><td class="num">46</td><td class="num">60.9%</td><td class="num">25.0%</td><td class="num">1</td><td class="num">$1,896</td><td class="num">$18</td></tr>
+            <tr><td>剛完成下單｜推薦定期組</td><td><span class="tag tag-green">LINE</span></td><td class="num">19</td><td class="num">63.2%</td><td class="num">25.0%</td><td class="num">0</td><td class="num">$0</td><td class="num">$8</td></tr>
+            <tr class="subtotal-row"><td>小計</td><td></td><td class="num">117</td><td class="num">—</td><td class="num">—</td><td class="num">1</td><td class="num">$1,896</td><td class="num">$47</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="auto-group">
+        <div class="auto-group-hd">🛒 購物車挽回</div>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>腳本</th><th>渠道</th><th class="num">觸及</th><th class="num">開信率</th><th class="num">點擊率</th><th class="num">訂單</th><th class="num">業績</th><th class="num">花費</th></tr></thead>
+          <tbody>
+            <tr><td>購物車｜未結帳挽回</td><td><span class="tag tag-green">LINE</span></td><td class="num">219</td><td class="num">79.5%</td><td class="num">29.3%</td><td class="num">3</td><td class="num">$5,457</td><td class="num">$88</td></tr>
+            <tr><td>發送 SMS</td><td><span class="tag tag-gray">SMS</span></td><td class="num">62</td><td class="num">—</td><td class="num">82.3%</td><td class="num">0</td><td class="num">$0</td><td class="num">$62</td></tr>
+            <tr class="subtotal-row"><td>小計</td><td></td><td class="num">281</td><td class="num">—</td><td class="num">—</td><td class="num">3</td><td class="num">$5,457</td><td class="num">$150</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="auto-group">
+        <div class="auto-group-hd">🔄 訂閱制</div>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>腳本</th><th>渠道</th><th class="num">觸及</th><th class="num">開信率</th><th class="num">點擊率</th><th class="num">訂單</th><th class="num">業績</th><th class="num">花費</th></tr></thead>
+          <tbody>
+            <tr><td>訂閱制｜未加入購物車提醒</td><td><span class="tag tag-green">LINE</span></td><td class="num">36</td><td class="num">61.1%</td><td class="num">22.7%</td><td class="num">0</td><td class="num">$0</td><td class="num">$14</td></tr>
+            <tr><td>訂閱制｜未加入購物車 3 天</td><td><span class="tag tag-green">LINE</span></td><td class="num">3</td><td class="num">33.3%</td><td class="num">0%</td><td class="num">0</td><td class="num">$0</td><td class="num">$1</td></tr>
+            <tr class="subtotal-row"><td>小計</td><td></td><td class="num">39</td><td class="num">—</td><td class="num">—</td><td class="num">0</td><td class="num">$0</td><td class="num">$15</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="auto-group">
+        <div class="auto-group-hd">🎯 活動再行銷</div>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>腳本</th><th>渠道</th><th class="num">觸及</th><th class="num">開信率</th><th class="num">點擊率</th><th class="num">訂單</th><th class="num">業績</th><th class="num">花費</th></tr></thead>
+          <tbody>
+            <tr><td>活動未加入購物車</td><td><span class="tag tag-green">LINE</span></td><td class="num">9</td><td class="num">33.3%</td><td class="num">33.3%</td><td class="num">—</td><td class="num">—</td><td class="num">$4</td></tr>
+            <tr class="subtotal-row"><td>小計</td><td></td><td class="num">9</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$4</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="auto-group">
+        <div class="auto-group-hd">😴 舊客沈睡喚回（SMS 腳本）</div>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>腳本</th><th>渠道</th><th class="num">觸及</th><th class="num">開信率</th><th class="num">點擊率</th><th class="num">訂單</th><th class="num">業績</th><th class="num">花費</th></tr></thead>
+          <tbody>
+            <tr><td>舊客｜開發型客戶（未瀏覽）</td><td><span class="tag tag-gray">SMS</span></td><td class="num">0</td><td class="num">0%</td><td class="num">0%</td><td class="num">0</td><td class="num">$0</td><td class="num">$0</td></tr>
+            <tr><td>舊客｜沈睡會員（未開封）</td><td><span class="tag tag-gray">SMS</span></td><td class="num">0</td><td class="num">0%</td><td class="num">0%</td><td class="num">0</td><td class="num">$0</td><td class="num">$0</td></tr>
+            <tr class="subtotal-row"><td>小計</td><td></td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="num">0</td><td class="num">$0</td><td class="num">$0</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="auto-group">
+        <div class="auto-group-hd">👥 舊客溝通（官網後台數據）</div>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>腳本</th><th>渠道</th><th class="num">觸及</th><th class="num">開信率</th><th class="num">點擊率</th><th class="num">訂單</th><th class="num">業績</th><th class="num">花費</th></tr></thead>
+          <tbody>
+            <tr><td>03/05 生日月</td><td><span class="tag tag-green">LINE</span></td><td class="num">23</td><td class="num">30.4%</td><td class="num">14.3%</td><td class="num">0</td><td class="num">$0</td><td class="num">$9</td></tr>
+            <tr><td>03/05 每月優惠（潛在忠誠）</td><td><span class="tag tag-green">LINE</span></td><td class="num">157</td><td class="num">32.5%</td><td class="num">7.8%</td><td class="num">4</td><td class="num">$8,740</td><td class="num">$63</td></tr>
+            <tr><td>03/10 回鍋組（開發型客戶）</td><td><span class="tag tag-green">LINE</span></td><td class="num">53</td><td class="num">45.3%</td><td class="num">12.5%</td><td class="num">4</td><td class="num">$5,612</td><td class="num">$21</td></tr>
+            <tr><td>03/20 黃金會員日（忠誠會員）</td><td><span class="tag tag-green">LINE</span></td><td class="num">225</td><td class="num">46.7%</td><td class="num">28.6%</td><td class="num">19</td><td class="num">$45,709</td><td class="num">$90</td></tr>
+            <tr><td>03/31 回鍋組＋贈品炙燒里肌（沈睡）</td><td><span class="tag tag-green">LINE</span></td><td class="num">285</td><td class="num">20.7%</td><td class="num">0%</td><td class="num">0</td><td class="num">$0</td><td class="num">$114</td></tr>
+            <tr class="subtotal-row"><td>小計</td><td></td><td class="num">743</td><td class="num">—</td><td class="num">—</td><td class="num">27</td><td class="num roas-hi">$60,061</td><td class="num">$297</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="auto-group">
+        <div class="auto-group-hd">🛍️ 購物車再行銷</div>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>腳本</th><th>渠道</th><th class="num">觸及</th><th class="num">開信率</th><th class="num">點擊率</th><th class="num">訂單</th><th class="num">業績</th><th class="num">花費</th></tr></thead>
+          <tbody>
+            <tr><td>未加入購物車｜6 hrs（6/30 截止）</td><td><span class="tag tag-green">LINE</span></td><td class="num">122</td><td class="num">77.1%</td><td class="num">19.7%</td><td class="num">1</td><td class="num">$2,804</td><td class="num">$49</td></tr>
+            <tr class="subtotal-row"><td>小計</td><td></td><td class="num">122</td><td class="num">—</td><td class="num">—</td><td class="num">1</td><td class="num">$2,804</td><td class="num">$49</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
       <p style="font-size:12px;color:var(--muted);margin-top:10px;">* 漸強自動化行銷自 2026.03 起啟用，花費計算為訊息成本（LINE 0.4元／人，SMS 以實際計費為準）</p>
     </div>
 
@@ -517,40 +615,99 @@ code{background:#F0ECEB;padding:2px 6px;border-radius:4px;font-family:monospace;
   <div class="card mb20">
     <div class="ops-section-hd">📍 自動化腳本</div>
     <div class="grid2">
-      <div class="flow-block">
-        <div class="flow-title">新客流程 <span class="tag tag-green">設定完畢</span></div>
-        <div class="flow-trigger">觸發：加入 LINE</div>
-        <div class="flow-steps">
-          <div class="flow-step"><span class="flow-arrow">→</span><span>立即：提供新客優惠－免運 <span class="tag tag-green">LINE</span></span></div>
-          <div class="flow-step"><span class="flow-arrow">→</span><span>3 天後未下單：提供新手組合包 <span class="tag tag-green">LINE</span></span></div>
-          <div class="flow-step"><span class="flow-arrow">→</span><span>3 天後再未下單：組合包倒數提醒 <span class="tag tag-gray">SMS</span></span></div>
+
+      <div class="auto-flow-card">
+        <div class="auto-trigger">
+          <span class="auto-trigger-icon">👤</span>
+          <div>
+            <div>觸發：加入 LINE 好友</div>
+            <div class="auto-trigger-sub">受眾：新加入好友（尚未下單）</div>
+          </div>
+        </div>
+        <div class="auto-flow-label">新客培育流程</div>
+        <div class="auto-steps">
+          <div class="auto-step">
+            <div class="auto-step-timing">立即</div>
+            <div class="auto-step-content">新客免運優惠 <span class="tag tag-green">LINE</span></div>
+          </div>
+          <div class="auto-step">
+            <div class="auto-step-timing">3 天後未下單</div>
+            <div class="auto-step-content">新手組合包推薦 <span class="tag tag-green">LINE</span></div>
+          </div>
+          <div class="auto-step">
+            <div class="auto-step-timing">再 3 天未下單</div>
+            <div class="auto-step-content">組合包倒數提醒 <span class="tag tag-gray">SMS</span></div>
+          </div>
         </div>
       </div>
-      <div class="flow-block">
-        <div class="flow-title">剛完成下單 <span class="tag tag-green">設定完畢</span></div>
-        <div class="flow-trigger">觸發：完成結帳</div>
-        <div class="flow-steps">
-          <div class="flow-step"><span class="flow-arrow">→</span><span>3 天後：提醒解凍方法 <span class="tag tag-green">LINE</span> <span class="tag tag-blue">EDM</span></span></div>
-          <div class="flow-step"><span class="flow-arrow">→</span><span>7 天後：創意料理＋宅料理頻道 <span class="tag tag-blue">EDM</span></span></div>
-          <div class="flow-step"><span class="flow-arrow">→</span><span>14 天後：回購推薦碼 <span class="tag tag-green">LINE</span></span></div>
-          <div class="flow-step"><span class="flow-arrow">→</span><span>28 天後：推薦定期組 <span class="tag tag-green">LINE</span></span></div>
+
+      <div class="auto-flow-card">
+        <div class="auto-trigger">
+          <span class="auto-trigger-icon">✅</span>
+          <div>
+            <div>觸發：完成結帳</div>
+            <div class="auto-trigger-sub">受眾：剛完成下單的顧客</div>
+          </div>
+        </div>
+        <div class="auto-flow-label">售後維繫流程</div>
+        <div class="auto-steps">
+          <div class="auto-step">
+            <div class="auto-step-timing">3 天後</div>
+            <div class="auto-step-content">解凍料理提醒 <span class="tag tag-green">LINE</span> <span class="tag tag-blue">EDM</span></div>
+          </div>
+          <div class="auto-step">
+            <div class="auto-step-timing">7 天後</div>
+            <div class="auto-step-content">創意料理＋宅料理頻道 <span class="tag tag-blue">EDM</span></div>
+          </div>
+          <div class="auto-step">
+            <div class="auto-step-timing">14 天後</div>
+            <div class="auto-step-content">回購推薦碼 <span class="tag tag-green">LINE</span></div>
+          </div>
+          <div class="auto-step">
+            <div class="auto-step-timing">28 天後</div>
+            <div class="auto-step-content">推薦定期訂閱 <span class="tag tag-green">LINE</span></div>
+          </div>
         </div>
       </div>
-      <div class="flow-block">
-        <div class="flow-title">購物車挽回 <span class="tag tag-green">設定完畢</span></div>
-        <div class="flow-trigger">觸發：加入購物車</div>
-        <div class="flow-steps">
-          <div class="flow-step"><span class="flow-arrow">→</span><span>≥ 1 天未結帳：發提醒 <span class="tag tag-green">LINE</span></span></div>
-          <div class="flow-step"><span class="flow-arrow">→</span><span>3 天後：提醒＋免運券 <span class="tag tag-gray">SMS</span></span></div>
+
+      <div class="auto-flow-card">
+        <div class="auto-trigger">
+          <span class="auto-trigger-icon">🛒</span>
+          <div>
+            <div>觸發：加入購物車</div>
+            <div class="auto-trigger-sub">受眾：加購後超過 1 天未結帳</div>
+          </div>
+        </div>
+        <div class="auto-flow-label">購物車挽回流程</div>
+        <div class="auto-steps">
+          <div class="auto-step">
+            <div class="auto-step-timing">≥ 1 天未結帳</div>
+            <div class="auto-step-content">購物車提醒 <span class="tag tag-green">LINE</span></div>
+          </div>
+          <div class="auto-step">
+            <div class="auto-step-timing">3 天後</div>
+            <div class="auto-step-content">再提醒＋免運券 <span class="tag tag-gray">SMS</span></div>
+          </div>
         </div>
       </div>
-      <div class="flow-block">
-        <div class="flow-title">生日會員 <span class="tag tag-green">設定完畢</span></div>
-        <div class="flow-trigger">觸發：生日當月 5 號</div>
-        <div class="flow-steps">
-          <div class="flow-step"><span class="flow-arrow">→</span><span>5 號當日：生日券＋專屬禮物包 <span class="tag tag-green">LINE</span></span></div>
+
+      <div class="auto-flow-card">
+        <div class="auto-trigger">
+          <span class="auto-trigger-icon">🎂</span>
+          <div>
+            <div>觸發：生日當月 5 號自動執行</div>
+            <div class="auto-trigger-sub">受眾：當月壽星會員</div>
+          </div>
+        </div>
+        <div class="auto-flow-label">生日禮遇</div>
+        <div class="auto-steps">
+          <div class="auto-step">
+            <div class="auto-step-timing">5 號當日</div>
+            <div class="auto-step-content">生日券＋專屬禮物包 <span class="tag tag-green">LINE</span></div>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -559,32 +716,86 @@ code{background:#F0ECEB;padding:2px 6px;border-radius:4px;font-family:monospace;
     <div class="ops-section-hd">📍 再行銷渠道（分眾推播）</div>
     <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">⚠️ 四種舊客名單需每月手動下載並更新至漸強</p>
     <div class="grid2 mb20">
-      <div class="flow-block">
-        <div class="flow-title">忠誠客戶（黃金會員）<span class="tag tag-green">設定完畢</span></div>
-        <div class="flow-steps">
-          <div class="flow-step"><span class="flow-arrow">→</span><span>每月 20 號：專屬折扣推播 <span class="tag tag-green">LINE</span></span></div>
-          <div class="flow-step"><span class="flow-arrow">→</span><span>專屬圖文選單（參考中華電信）<span class="tag tag-green">LINE</span></span></div>
+
+      <div class="rt-card">
+        <div class="rt-card-hd">
+          <span class="rt-icon">🥇</span>
+          <div>
+            <div class="rt-name">黃金會員</div>
+            <div class="rt-desc">高頻購買 × 高消費 × 近期活躍<br>品牌最核心的忠誠客群，優先維繫</div>
+          </div>
+        </div>
+        <div class="rt-actions">
+          <div class="rt-action">
+            <span class="rt-action-when">每月 20 號</span>
+            <span>專屬折扣推播</span>
+            <span class="tag tag-green">LINE</span>
+          </div>
+          <div class="rt-action">
+            <span class="rt-action-when">常設</span>
+            <span>黃金會員專屬圖文選單</span>
+            <span class="tag tag-green">LINE</span>
+          </div>
         </div>
       </div>
-      <div class="flow-block">
-        <div class="flow-title">潛在忠誠客戶 <span class="tag tag-green">設定完畢</span></div>
-        <div class="flow-steps">
-          <div class="flow-step"><span class="flow-arrow">→</span><span>每月 5 號：專屬優惠券三波推播 <span class="tag tag-green">LINE</span></span></div>
+
+      <div class="rt-card">
+        <div class="rt-card-hd">
+          <span class="rt-icon">💛</span>
+          <div>
+            <div class="rt-name">潛在忠誠客戶</div>
+            <div class="rt-desc">有回購紀錄、消費力尚可<br>持續優惠刺激，培養成黃金會員</div>
+          </div>
+        </div>
+        <div class="rt-actions">
+          <div class="rt-action">
+            <span class="rt-action-when">每月 5 號</span>
+            <span>三波優惠券推播（7天、15天、23天）</span>
+            <span class="tag tag-green">LINE</span>
+          </div>
         </div>
       </div>
-      <div class="flow-block">
-        <div class="flow-title">開發型客戶 <span class="tag tag-green">設定完畢</span></div>
-        <div class="flow-steps">
-          <div class="flow-step"><span class="flow-arrow">→</span><span>每月 10 號：免運優惠、回購組推播 <span class="tag tag-green">LINE</span> <span class="tag tag-gray">SMS</span></span></div>
+
+      <div class="rt-card">
+        <div class="rt-card-hd">
+          <span class="rt-icon">🔧</span>
+          <div>
+            <div class="rt-name">開發型客戶</div>
+            <div class="rt-desc">有購買但頻率低、還在觀望<br>需要誘因推動下一次消費</div>
+          </div>
+        </div>
+        <div class="rt-actions">
+          <div class="rt-action">
+            <span class="rt-action-when">每月 10 號</span>
+            <span>免運優惠＋回購組合推薦</span>
+            <span class="tag tag-green">LINE</span>
+            <span class="tag tag-gray">SMS</span>
+          </div>
         </div>
       </div>
-      <div class="flow-block">
-        <div class="flow-title">沈睡會員 <span class="tag tag-green">設定完畢</span></div>
-        <div class="flow-steps">
-          <div class="flow-step"><span class="flow-arrow">→</span><span>每月一次：回鍋組＋贈炙燒里肌 <span class="tag tag-green">LINE</span></span></div>
-          <div class="flow-step"><span class="flow-arrow">→</span><span>3 天未購：最殺折扣 <span class="tag tag-gray">SMS</span></span></div>
+
+      <div class="rt-card">
+        <div class="rt-card-hd">
+          <span class="rt-icon">😴</span>
+          <div>
+            <div class="rt-name">沈睡會員</div>
+            <div class="rt-desc">久未回購、逐漸流失中<br>用最強優惠做最後喚回</div>
+          </div>
+        </div>
+        <div class="rt-actions">
+          <div class="rt-action">
+            <span class="rt-action-when">每月一次</span>
+            <span>回鍋組合＋贈炙燒里肌</span>
+            <span class="tag tag-green">LINE</span>
+          </div>
+          <div class="rt-action">
+            <span class="rt-action-when">3 天未購</span>
+            <span>最殺折扣碼（85 折）</span>
+            <span class="tag tag-gray">SMS</span>
+          </div>
         </div>
       </div>
+
     </div>
 
     <div class="ops-section-hd" style="font-size:13px;margin-bottom:12px;">RFM 分類法</div>
@@ -666,39 +877,45 @@ code{background:#F0ECEB;padding:2px 6px;border-radius:4px;font-family:monospace;
   <!-- 報價 -->
   <div class="card">
     <div class="ops-section-hd">📍 報價</div>
-    <p style="font-weight:700;font-size:13px;margin-bottom:12px;">🔍 行銷類別報價</p>
-    <div class="tbl-scroll mb20">
-    <table>
-      <thead><tr><th>項目</th><th class="num">金額</th><th>備註</th></tr></thead>
-      <tbody>
-        <tr><td>自動化腳本企劃</td><td class="num price-tag">3,500</td><td>一次</td></tr>
-        <tr><td>自動化腳本設定</td><td class="num price-tag">7,000</td><td>含功能設定、組合包設計、圖片設計、文案撰寫，一次</td></tr>
-        <tr><td>自動化維護、優化、數據</td><td class="num price-tag">1,500</td><td>每月</td></tr>
-        <tr><td>再行銷企劃</td><td class="num price-tag">2,500</td><td>一次</td></tr>
-        <tr><td>再行銷腳本設定</td><td class="num price-tag">7,000</td><td>含功能設定、組合包設計、圖片設計、文案撰寫，一次</td></tr>
-        <tr><td>再行銷優化、維護、數據</td><td class="num price-tag">2,500</td><td>每月（原官網運營項目）</td></tr>
-        <tr><td>官網運營</td><td class="num price-tag">2,500</td><td>含 KOL、EDM 一篇，每月</td></tr>
-        <tr><td>LINE 官方社群</td><td class="num price-tag">4,200</td><td>每月</td></tr>
-        <tr><td>LINE 批發社群</td><td class="num price-tag">3,600</td><td>每月</td></tr>
-        <tr><td>訂閱制－營運與優化</td><td class="num price-tag">營收分潤 5%</td><td>日常監控、方案優化、行銷策略建議</td></tr>
-      </tbody>
-    </table>
-    </div>
-    <p style="font-weight:700;font-size:13px;margin-bottom:12px;">🔍 設計類別報價</p>
-    <div class="tbl-scroll">
-    <table>
-      <thead><tr><th>內容</th><th class="num">報價</th><th>備註</th></tr></thead>
-      <tbody>
-        <tr><td>頁面架構</td><td class="num price-tag">3,000</td><td>含文案、參考圖</td></tr>
-        <tr><td>後續同架構，只改文案</td><td class="num price-tag">600</td><td></td></tr>
-        <tr><td>視覺設計</td><td class="num price-tag">4,500</td><td></td></tr>
-        <tr><td>後續同架構，只換圖片、文案</td><td class="num price-tag">800</td><td></td></tr>
-        <tr><td>圖文選單</td><td class="num price-tag">500</td><td></td></tr>
-        <tr><td>方形 Banner</td><td class="num price-tag">500</td><td>含可改價的 PSD</td></tr>
-        <tr><td>橫式 Banner</td><td class="num price-tag">600</td><td>含可改價的 PSD</td></tr>
-        <tr><td>任一 BN resize</td><td class="num price-tag">150</td><td></td></tr>
-      </tbody>
-    </table>
+    <div class="grid2" style="align-items:start;gap:20px;">
+      <div>
+        <p style="font-weight:700;font-size:13px;margin-bottom:12px;">🔍 行銷類別報價</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>項目</th><th class="num">金額</th><th>備註</th></tr></thead>
+          <tbody>
+            <tr><td>自動化腳本企劃</td><td class="num price-tag">3,500</td><td>一次</td></tr>
+            <tr><td>自動化腳本設定</td><td class="num price-tag">7,000</td><td>含功能設定、組合包設計、圖片設計、文案，一次</td></tr>
+            <tr><td>自動化維護、優化、數據</td><td class="num price-tag">1,500</td><td>每月</td></tr>
+            <tr><td>再行銷企劃</td><td class="num price-tag">2,500</td><td>一次</td></tr>
+            <tr><td>再行銷腳本設定</td><td class="num price-tag">7,000</td><td>含功能設定、組合包設計、圖片設計、文案，一次</td></tr>
+            <tr><td>再行銷優化、維護、數據</td><td class="num price-tag">2,500</td><td>每月</td></tr>
+            <tr><td>官網運營</td><td class="num price-tag">2,500</td><td>含 KOL、EDM 一篇，每月</td></tr>
+            <tr><td>LINE 官方社群</td><td class="num price-tag">4,200</td><td>每月</td></tr>
+            <tr><td>LINE 批發社群</td><td class="num price-tag">3,600</td><td>每月</td></tr>
+            <tr><td>訂閱制－營運與優化</td><td class="num price-tag">分潤 5%</td><td>日常監控、方案優化、行銷策略建議</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+      <div>
+        <p style="font-weight:700;font-size:13px;margin-bottom:12px;">🎨 設計類別報價</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>內容</th><th class="num">報價</th><th>備註</th></tr></thead>
+          <tbody>
+            <tr><td>頁面架構</td><td class="num price-tag">3,000</td><td>含文案、參考圖</td></tr>
+            <tr><td>後續同架構，只改文案</td><td class="num price-tag">600</td><td></td></tr>
+            <tr><td>視覺設計</td><td class="num price-tag">4,500</td><td></td></tr>
+            <tr><td>後續同架構，只換圖片、文案</td><td class="num price-tag">800</td><td></td></tr>
+            <tr><td>圖文選單</td><td class="num price-tag">500</td><td></td></tr>
+            <tr><td>方形 Banner</td><td class="num price-tag">500</td><td>含可改價的 PSD</td></tr>
+            <tr><td>橫式 Banner</td><td class="num price-tag">600</td><td>含可改價的 PSD</td></tr>
+            <tr><td>任一 BN resize</td><td class="num price-tag">150</td><td></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
