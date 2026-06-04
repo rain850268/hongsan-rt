@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>紅杉｜折扣碼管理</title>
+<style>
+:root{
+  --pri:#2E2E2E;--pri-light:#6B6B6B;--accent:#7A7060;--accent2:#C4BAA8;
+  --bg:#F4F3EF;--card:#FFFFFF;--border:#DEDAD4;--brand-light:#ECEAE3;
+  --text:#2E2E2E;--muted:#8A8580;
+  --green:#0F7B6C;--red:#C0392B;--amber:#936800;--blue:#0B6E99;--purple:#7B5EA7;
+  --line-green:#06C755;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC',sans-serif;
+  background:var(--bg);color:var(--text);font-size:14px;}
+
+nav{position:sticky;top:0;z-index:100;background:var(--pri);
+  display:flex;align-items:center;gap:4px;padding:0 16px;overflow-x:auto;}
+nav a{color:rgba(255,255,255,0.7);text-decoration:none;padding:14px 14px;
+  white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;
+  font-size:13px;font-weight:500;}
+nav a.active{color:#fff;border-bottom-color:var(--accent);}
+nav a:hover:not(.active){color:rgba(255,255,255,0.9);}
+.nav-brand{color:#fff;font-weight:700;font-size:15px;margin-right:8px;
+  white-space:nowrap;padding:14px 8px 14px 0;border-right:1px solid rgba(255,255,255,0.2);}
+
+.page{max-width:1100px;margin:0 auto;padding:20px 16px 60px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;}
+h2{font-size:17px;font-weight:700;margin-bottom:16px;}
+h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--muted);}
+.mb16{margin-bottom:16px;}.mb20{margin-bottom:20px;}
+.section-title{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.updated{font-size:11px;color:var(--muted);margin-left:auto;}
+
+.hero{background:linear-gradient(135deg,#2E2E2E 0%,#4A4744 100%);
+  color:#fff;border-radius:16px;padding:28px;margin-bottom:20px;}
+.hero-title{font-size:13px;opacity:.8;margin-bottom:6px;}
+.hero-month{font-size:28px;font-weight:800;margin-bottom:4px;}
+.hero-sub{font-size:12px;opacity:.65;}
+
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:8px 10px;font-size:11px;font-weight:600;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.4px;
+  border-bottom:1px solid var(--border);background:#F9F7F6;}
+td{padding:9px 10px;border-bottom:1px solid #EDE8E4;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#F5F1EF;}
+.tbl-scroll{overflow-x:auto;}
+.num{text-align:right;font-variant-numeric:tabular-nums;}
+
+code{background:#F0ECEB;padding:2px 6px;border-radius:4px;font-family:monospace;
+  font-size:12px;color:var(--pri);border:1px solid var(--border);}
+
+.tbl-section td{background:#C7AF94;color:#3A2E22;font-weight:700;font-size:11px;
+  text-transform:uppercase;letter-spacing:.6px;padding:7px 10px;}
+.price-tag{font-weight:700;color:var(--pri);}
+.code-hint{font-size:10px;color:var(--muted);display:block;margin-top:2px;}
+[contenteditable]{outline:none;min-width:60px;cursor:text;}
+[contenteditable]:focus{background:rgba(122,112,96,.1);border-radius:4px;outline:1px solid var(--accent);}
+
+.kpi{text-align:center;padding:16px;}
+.kpi .val{font-size:24px;font-weight:800;}
+.kpi .lbl{font-size:12px;color:var(--muted);margin-top:4px;}
+
+/* Generator result badge */
+.gen-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;
+  background:var(--brand-light);border:1px solid var(--border);border-radius:8px;
+  font-size:12px;font-weight:600;color:var(--pri);}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">紅杉｜折扣碼</span>
+  <a href="/hongsan-rt/" style="color:rgba(255,255,255,0.7);">← Dashboard</a>
+  <a href="#" class="active">折扣碼管理</a>
+</nav>
+
+<div class="page">
+
+  <div class="hero mb20">
+    <div class="hero-title">紅杉有限公司 ／ 行銷排程</div>
+    <div class="hero-month">2026 折扣碼管理</div>
+    <div class="hero-sub">資料自動儲存於本機・可直接點擊欄位編輯</div>
+  </div>
+
+  <!-- 折扣碼生成器 -->
+  <div class="card mb20">
+    <div class="section-title">🎲 折扣碼生成器
+      <span class="updated">依月份自動命名</span>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">每月折扣碼命名規則：月份縮寫 + 折扣類型。生成後可複製，或一鍵填入下方表格。</p>
+
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
+      <select id="gen-month-s" style="padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--card);font-size:14px;color:var(--text);cursor:pointer;outline:none;">
+        <option value="1">1 月（JAN）</option>
+        <option value="2">2 月（FEB）</option>
+        <option value="3">3 月（MAR）</option>
+        <option value="4">4 月（APR）</option>
+        <option value="5">5 月（MAY）</option>
+        <option value="6" selected>6 月（JUN）</option>
+        <option value="7">7 月（JUL）</option>
+        <option value="8">8 月（AUG）</option>
+        <option value="9">9 月（SEP）</option>
+        <option value="10">10 月（OCT）</option>
+        <option value="11">11 月（NOV）</option>
+        <option value="12">12 月（DEC）</option>
+      </select>
+      <button style="padding:8px 20px;background:var(--pri);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;" onclick="generateCodes()">生成折扣碼</button>
+    </div>
+
+    <div id="gen-result-s" style="display:none;">
+      <div class="tbl-scroll"><table>
+        <thead><tr>
+          <th>用途</th>
+          <th>折扣券名稱</th>
+          <th>折扣碼</th>
+          <th style="min-width:180px;">操作</th>
+        </tr></thead>
+        <tbody id="gen-table-body-s"></tbody>
+      </table></div>
+      <div style="margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <button id="gen-apply-btn-s" style="padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">一鍵填入折扣碼</button>
+        <span style="font-size:11px;color:var(--muted);">會覆蓋所選月份的現有折扣碼</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 每月折扣碼 -->
+  <div class="card mb20">
+    <div class="section-title">🗓️ 每月折扣碼
+      <span class="updated">點擊欄位即可編輯，自動存檔</span>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">每月 5 號發送（潛在忠誠客），20 號發送（黃金會員）。折扣碼用完即失效，每月更新。</p>
+    <div class="tbl-scroll">
+    <table>
+      <thead><tr>
+        <th>月份</th>
+        <th>黃金會員（20號）<br><span class="code-hint">85折 / 滿 1800 / 7天</span></th>
+        <th>潛在忠誠（7天）<br><span class="code-hint">90折 / 滿 1000</span></th>
+        <th>潛在忠誠（15天）<br><span class="code-hint">-100 / 滿 1000</span></th>
+        <th>潛在忠誠（23天）<br><span class="code-hint">-150 / 滿 1500</span></th>
+        <th>備註</th>
+      </tr></thead>
+      <tbody id="monthly-codes-body-s"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- 常設折扣碼 -->
+  <div class="card mb20">
+    <div class="section-title">📌 常設折扣碼</div>
+    <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>折扣碼</th><th>折扣</th><th>使用條件</th><th>觸發時機</th></tr></thead>
+      <tbody>
+        <tr class="tbl-section"><td colspan="4">⚡ 新客流程</td></tr>
+        <tr><td><code>2026new</code></td><td>免運</td><td>滿 1,490 / 每帳號 1 次</td><td>新客｜免運（自動觸發）</td></tr>
+        <tr><td><code>rookie</code></td><td>免運</td><td>9 入 1,199 / 每帳號 1 次</td><td>新客｜三天後未下單</td></tr>
+        <tr><td><code>again180</code></td><td>折 $180</td><td>滿 1,500 / 每帳號 1 次</td><td>新客｜剛完成下單－回購推薦碼</td></tr>
+        <tr class="tbl-section"><td colspan="4">🛒 購物車挽回</td></tr>
+        <tr><td><code>ATC2026</code></td><td>贈品（黃金酥脆魚排）</td><td>滿 1,099 / 每帳號 1 次</td><td>購物車｜未結帳挽回（LINE）</td></tr>
+        <tr><td><code>ATC1200</code></td><td>免運</td><td>滿 1,200 / 每帳號 1 次</td><td>購物車｜SMS 再次挽回</td></tr>
+        <tr class="tbl-section"><td colspan="4">🔗 LINE 好友綁定</td></tr>
+        <tr><td><code>KUZQAT</code></td><td>88 折</td><td>滿 1,400 / 每帳號 1 次</td><td>LINE 新好友綁定後贈</td></tr>
+        <tr class="tbl-section"><td colspan="4">👥 每月舊客推播（常設）</td></tr>
+        <tr><td><code>2026HBD</code></td><td>生日禮包 5 包組</td><td>滿 500 / 每帳號 1 次 / 每年更新</td><td>每月 5 號・當月壽星</td></tr>
+        <tr><td><code>JBH1490</code></td><td>免運</td><td>滿 1,490 / 每帳號 1 次</td><td>每月 10 號・開發型會員</td></tr>
+        <tr><td><code>comeback</code></td><td>贈品（炙燒里肌）</td><td>滿 $1 / 每帳號 1 次</td><td>每月 10 號・沈睡會員 Step 1</td></tr>
+        <tr class="tbl-section"><td colspan="4">😴 沈睡喚回（SMS）</td></tr>
+        <tr><td><code>W85WGJ</code></td><td>85 折</td><td>滿 1,000 / 每帳號 1 次</td><td>舊客｜沈睡會員 SMS Step 2</td></tr>
+        <tr class="tbl-section"><td colspan="4">📦 再行銷商品組</td></tr>
+        <tr><td><span style="background:#FDECC8;color:#705826;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;">任選折扣</span></td><td>5 入 $599</td><td>任選組合</td><td>沈睡會員、開發型客戶（自動化 / 每月推播）</td></tr>
+        <tr class="tbl-section"><td colspan="4">🔄 訂閱制</td></tr>
+        <tr><td><code>ponus_666</code></td><td>贈品</td><td>滿 500 / 每帳號 1 次</td><td>訂閱制首購加贈</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- 訊息成本 -->
+  <div class="card">
+    <div class="section-title">💰 訊息成本參考</div>
+    <div class="grid3">
+      <div class="card kpi" style="padding:16px;">
+        <div class="val">$0.4</div><div class="lbl">LINE / 人</div>
+      </div>
+      <div class="card kpi" style="padding:16px;">
+        <div class="val">$1</div><div class="lbl">SMS / 人</div>
+      </div>
+      <div class="card kpi" style="padding:16px;">
+        <div class="val">$0.2</div><div class="lbl">EDM / 人</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const MONTH_ABBR_GEN = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const MONTHS_ZH_S = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+const MONTHS_NUM_S = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+const DEFAULT_CODES_S = {
+  '03':{golden:'MAR_85', p7d:'MAR_9', p15d:'MAR_100', p23d:'MAR_150', note:''},
+  '04':{golden:'APR_85', p7d:'APR_9', p15d:'APR_100', p23d:'APR_150', note:''},
+};
+const LS_KEY = 'hongsan_monthly_codes_2026';
+
+function loadCodes() {
+  try { const s = localStorage.getItem(LS_KEY); return s ? JSON.parse(s) : {...DEFAULT_CODES_S}; }
+  catch(e) { return {...DEFAULT_CODES_S}; }
+}
+
+function saveCodes() {
+  const data = {};
+  document.querySelectorAll('#monthly-codes-body-s tr').forEach(tr => {
+    const m = tr.dataset.month;
+    const cells = tr.querySelectorAll('[contenteditable]');
+    if (!m || cells.length < 5) return;
+    data[m] = {
+      golden: cells[0].textContent.trim(),
+      p7d:    cells[1].textContent.trim(),
+      p15d:   cells[2].textContent.trim(),
+      p23d:   cells[3].textContent.trim(),
+      note:   cells[4].textContent.trim(),
+    };
+  });
+  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e){}
+}
+
+let codesBuilt = false;
+function buildMonthlyCodes() {
+  if (codesBuilt) return;
+  codesBuilt = true;
+  const codes = loadCodes();
+  const tbody = document.getElementById('monthly-codes-body-s');
+  tbody.innerHTML = '';
+  MONTHS_NUM_S.forEach((m, i) => {
+    const c = codes[m] || {golden:'', p7d:'', p15d:'', p23d:'', note:''};
+    const tr = document.createElement('tr');
+    tr.dataset.month = m;
+    tr.innerHTML = `
+      <td><strong>${MONTHS_ZH_S[i]}</strong></td>
+      <td contenteditable="true" oninput="saveCodes()">${c.golden}</td>
+      <td contenteditable="true" oninput="saveCodes()">${c.p7d}</td>
+      <td contenteditable="true" oninput="saveCodes()">${c.p15d}</td>
+      <td contenteditable="true" oninput="saveCodes()">${c.p23d}</td>
+      <td contenteditable="true" oninput="saveCodes()" style="color:var(--muted)">${c.note}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// 折扣碼生成器
+function generateCodes() {
+  const monthNum = parseInt(document.getElementById('gen-month-s').value);
+  const monthIdx = monthNum - 1;
+  const abbr = MONTH_ABBR_GEN[monthIdx];
+  const numStr = String(monthNum);
+
+  const items = [
+    { usage: '黃金會員日（20 號）', name: `${numStr} 月黃金會員日`, code: `${abbr}_85` },
+    { usage: '潛在忠誠 7 天｜90折', name: `${numStr} 月專屬優惠券｜9 折`, code: `${abbr}_9` },
+    { usage: '潛在忠誠 15 天｜-100', name: `${numStr} 月專屬優惠券｜100`, code: `${abbr}_100` },
+    { usage: '潛在忠誠 23 天｜-150', name: `${numStr} 月專屬優惠券｜150`, code: `${abbr}_150` },
+  ];
+
+  document.getElementById('gen-result-s').style.display = '';
+  const tbody = document.getElementById('gen-table-body-s');
+  tbody.innerHTML = items.map(item => `
+    <tr>
+      <td style="color:var(--muted);font-size:12px;">${item.usage}</td>
+      <td><strong>${item.name}</strong></td>
+      <td><code>${item.code}</code></td>
+      <td>
+        <button onclick="copyGenText('${item.name}')" style="padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--card);cursor:pointer;font-size:12px;margin-right:4px;">複製名稱</button>
+        <button onclick="copyGenText('${item.code}')" style="padding:4px 10px;border:1px solid var(--accent);border-radius:6px;background:var(--card);cursor:pointer;font-size:12px;color:var(--accent);font-weight:600;">複製代碼</button>
+      </td>
+    </tr>`).join('');
+
+  const applyBtn = document.getElementById('gen-apply-btn-s');
+  applyBtn.textContent = `一鍵填入 ${numStr} 月折扣碼`;
+  applyBtn.disabled = false;
+  applyBtn.style.opacity = '1';
+  applyBtn.onclick = () => applyGeneratedCodes(monthNum, abbr);
+}
+
+function copyGenText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const t = document.createElement('div');
+    t.textContent = '已複製：' + text;
+    t.style.cssText = 'position:fixed;bottom:28px;right:28px;background:#2E2E2E;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.2);';
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 1800);
+  });
+}
+
+function applyGeneratedCodes(monthNum, abbr) {
+  const monthStr = String(monthNum).padStart(2, '0');
+  if (!codesBuilt) buildMonthlyCodes();
+  const tbody = document.getElementById('monthly-codes-body-s');
+  if (!tbody) return;
+  let applied = false;
+  tbody.querySelectorAll('tr').forEach(row => {
+    if (row.dataset.month === monthStr) {
+      const cells = row.querySelectorAll('[contenteditable]');
+      if (cells.length >= 4) {
+        cells[0].textContent = `${abbr}_85`;
+        cells[1].textContent = `${abbr}_9`;
+        cells[2].textContent = `${abbr}_100`;
+        cells[3].textContent = `${abbr}_150`;
+        saveCodes();
+        applied = true;
+      }
+    }
+  });
+  if (applied) {
+    const btn = document.getElementById('gen-apply-btn-s');
+    const orig = btn.textContent;
+    btn.textContent = '✓ 已填入！';
+    btn.disabled = true;
+    btn.style.opacity = '.6';
+    setTimeout(() => { btn.textContent = orig; btn.disabled = false; btn.style.opacity = '1'; }, 2200);
+  }
+}
+
+buildMonthlyCodes();
+</script>
+</body>
+</html>

@@ -1097,7 +1097,43 @@ code{background:#F0ECEB;padding:2px 6px;border-radius:4px;font-family:monospace;
   <div class="hero mb20">
     <div class="hero-title">紅杉有限公司 ／ 行銷排程</div>
     <div class="hero-month">2026 折扣碼管理</div>
-    <div class="hero-sub">資料自動儲存於本機・可直接點擊欄位編輯</div>
+    <div class="hero-sub">資料自動儲存於本機・可直接點擊欄位編輯　<a href="/hongsan-rt/schedule/" style="color:rgba(255,255,255,.7);font-size:11px;border:1px solid rgba(255,255,255,.3);border-radius:99px;padding:2px 10px;text-decoration:none;margin-left:6px;">↗ 獨立頁面</a></div>
+  </div>
+
+  <div class="card mb20">
+    <div class="section-title">🎲 折扣碼生成器
+      <span class="updated">依月份自動命名</span>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">每月折扣碼命名規則：月份縮寫 + 折扣類型。生成後可複製，或一鍵填入下方表格。</p>
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
+      <select id="gen-month" style="padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--card);font-size:14px;color:var(--text);cursor:pointer;outline:none;">
+        <option value="1">1 月（JAN）</option>
+        <option value="2">2 月（FEB）</option>
+        <option value="3">3 月（MAR）</option>
+        <option value="4">4 月（APR）</option>
+        <option value="5">5 月（MAY）</option>
+        <option value="6" selected>6 月（JUN）</option>
+        <option value="7">7 月（JUL）</option>
+        <option value="8">8 月（AUG）</option>
+        <option value="9">9 月（SEP）</option>
+        <option value="10">10 月（OCT）</option>
+        <option value="11">11 月（NOV）</option>
+        <option value="12">12 月（DEC）</option>
+      </select>
+      <button style="padding:8px 20px;background:var(--pri);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;" onclick="generateCodes()">生成折扣碼</button>
+    </div>
+    <div id="gen-result" style="display:none;">
+      <div class="tbl-scroll"><table>
+        <thead><tr>
+          <th>用途</th><th>折扣券名稱</th><th>折扣碼</th><th style="min-width:160px;">操作</th>
+        </tr></thead>
+        <tbody id="gen-table-body"></tbody>
+      </table></div>
+      <div style="margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <button id="gen-apply-btn" style="padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">一鍵填入折扣碼</button>
+        <span style="font-size:11px;color:var(--muted);">會覆蓋所選月份的現有折扣碼</span>
+      </div>
+    </div>
   </div>
 
   <div class="card mb20">
@@ -2095,6 +2131,88 @@ function saveCodes() {
     };
   });
   try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e){}
+}
+
+// ─── 折扣碼生成器 ──────────────────────────────────────────
+const MONTH_ABBR_GEN = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+function generateCodes(selectId, tableBodyId, resultId, applyBtnId) {
+  selectId = selectId || 'gen-month';
+  tableBodyId = tableBodyId || 'gen-table-body';
+  resultId = resultId || 'gen-result';
+  applyBtnId = applyBtnId || 'gen-apply-btn';
+
+  const monthNum = parseInt(document.getElementById(selectId).value);
+  const monthIdx = monthNum - 1;
+  const abbr = MONTH_ABBR_GEN[monthIdx];
+  const numStr = String(monthNum);
+
+  const items = [
+    { usage: '黃金會員日（20 號）', name: `${numStr} 月黃金會員日`, code: `${abbr}_85`, field: 'golden' },
+    { usage: '潛在忠誠 7 天｜90折', name: `${numStr} 月專屬優惠券｜9 折`, code: `${abbr}_9`, field: 'p7d' },
+    { usage: '潛在忠誠 15 天｜-100', name: `${numStr} 月專屬優惠券｜100`, code: `${abbr}_100`, field: 'p15d' },
+    { usage: '潛在忠誠 23 天｜-150', name: `${numStr} 月專屬優惠券｜150`, code: `${abbr}_150`, field: 'p23d' },
+  ];
+
+  const resultDiv = document.getElementById(resultId);
+  resultDiv.style.display = '';
+
+  const tbody = document.getElementById(tableBodyId);
+  tbody.innerHTML = items.map(item => `
+    <tr>
+      <td style="color:var(--muted);font-size:12px;">${item.usage}</td>
+      <td><strong>${item.name}</strong></td>
+      <td><code>${item.code}</code></td>
+      <td>
+        <button onclick="copyGenText('${item.name}')" style="padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--card);cursor:pointer;font-size:12px;margin-right:4px;">複製名稱</button>
+        <button onclick="copyGenText('${item.code}')" style="padding:4px 10px;border:1px solid var(--accent);border-radius:6px;background:var(--card);cursor:pointer;font-size:12px;color:var(--accent);font-weight:600;">複製代碼</button>
+      </td>
+    </tr>`).join('');
+
+  const applyBtn = document.getElementById(applyBtnId);
+  applyBtn.textContent = `一鍵填入 ${numStr} 月折扣碼`;
+  applyBtn.disabled = false;
+  applyBtn.style.opacity = '1';
+  applyBtn.onclick = () => applyGeneratedCodes(monthNum, abbr, applyBtnId);
+}
+
+function copyGenText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const t = document.createElement('div');
+    t.textContent = '已複製：' + text;
+    t.style.cssText = 'position:fixed;bottom:28px;right:28px;background:#2E2E2E;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.2);';
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 1800);
+  });
+}
+
+function applyGeneratedCodes(monthNum, abbr, applyBtnId) {
+  const monthStr = String(monthNum).padStart(2, '0');
+  if (!codesBuilt) buildMonthlyCodes();
+  const tbody = document.getElementById('monthly-codes-body');
+  if (!tbody) return;
+  let applied = false;
+  tbody.querySelectorAll('tr').forEach(row => {
+    if (row.dataset.month === monthStr) {
+      const cells = row.querySelectorAll('[contenteditable]');
+      if (cells.length >= 4) {
+        cells[0].textContent = `${abbr}_85`;
+        cells[1].textContent = `${abbr}_9`;
+        cells[2].textContent = `${abbr}_100`;
+        cells[3].textContent = `${abbr}_150`;
+        saveCodes();
+        applied = true;
+      }
+    }
+  });
+  if (applied && applyBtnId) {
+    const btn = document.getElementById(applyBtnId);
+    const orig = btn.textContent;
+    btn.textContent = '✓ 已填入！';
+    btn.disabled = true;
+    btn.style.opacity = '.6';
+    setTimeout(() => { btn.textContent = orig; btn.disabled = false; btn.style.opacity = '1'; }, 2200);
+  }
 }
 
 let codesBuilt = false;
