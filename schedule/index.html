@@ -146,6 +146,7 @@ code{background:#F0ECEB;padding:2px 6px;border-radius:4px;font-family:monospace;
         <th>潛在忠誠（7天）<br><span class="code-hint">90折 / 滿 1000</span></th>
         <th>潛在忠誠（15天）<br><span class="code-hint">-100 / 滿 1000</span></th>
         <th>潛在忠誠（23天）<br><span class="code-hint">-150 / 滿 1500</span></th>
+        <th>開發型客戶（3天）<br><span class="code-hint">免運 / 滿 999</span></th>
         <th>備註</th>
       </tr></thead>
       <tbody id="monthly-codes-body-s"></tbody>
@@ -207,8 +208,8 @@ const MONTH_ABBR_GEN = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','O
 const MONTHS_ZH_S = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
 const MONTHS_NUM_S = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 const DEFAULT_CODES_S = {
-  '03':{golden:'MAR_85', p7d:'MAR_9', p15d:'MAR_100', p23d:'MAR_150', note:''},
-  '04':{golden:'APR_85', p7d:'APR_9', p15d:'APR_100', p23d:'APR_150', note:''},
+  '03':{golden:'MAR_85', p7d:'MAR_9', p15d:'MAR_100', p23d:'MAR_150', dev999:'', note:''},
+  '04':{golden:'APR_85', p7d:'APR_9', p15d:'APR_100', p23d:'APR_150', dev999:'', note:''},
 };
 const LS_KEY = 'hongsan_monthly_codes_2026';
 
@@ -222,13 +223,14 @@ function saveCodes() {
   document.querySelectorAll('#monthly-codes-body-s tr').forEach(tr => {
     const m = tr.dataset.month;
     const cells = tr.querySelectorAll('[contenteditable]');
-    if (!m || cells.length < 5) return;
+    if (!m || cells.length < 6) return;
     data[m] = {
       golden: cells[0].textContent.trim(),
       p7d:    cells[1].textContent.trim(),
       p15d:   cells[2].textContent.trim(),
       p23d:   cells[3].textContent.trim(),
-      note:   cells[4].textContent.trim(),
+      dev999: cells[4].textContent.trim(),
+      note:   cells[5].textContent.trim(),
     };
   });
   try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e){}
@@ -242,7 +244,7 @@ function buildMonthlyCodes() {
   const tbody = document.getElementById('monthly-codes-body-s');
   tbody.innerHTML = '';
   MONTHS_NUM_S.forEach((m, i) => {
-    const c = codes[m] || {golden:'', p7d:'', p15d:'', p23d:'', note:''};
+    const c = codes[m] || {golden:'', p7d:'', p15d:'', p23d:'', dev999:'', note:''};
     const tr = document.createElement('tr');
     tr.dataset.month = m;
     tr.innerHTML = `
@@ -251,6 +253,7 @@ function buildMonthlyCodes() {
       <td contenteditable="true" oninput="saveCodes()">${c.p7d}</td>
       <td contenteditable="true" oninput="saveCodes()">${c.p15d}</td>
       <td contenteditable="true" oninput="saveCodes()">${c.p23d}</td>
+      <td contenteditable="true" oninput="saveCodes()">${c.dev999 || ''}</td>
       <td contenteditable="true" oninput="saveCodes()" style="color:var(--muted)">${c.note}</td>
     `;
     tbody.appendChild(tr);
@@ -269,6 +272,7 @@ function generateCodes() {
     { usage: '潛在忠誠 7 天｜90折', name: `${numStr} 月專屬優惠券｜9 折`, code: `${abbr}_9` },
     { usage: '潛在忠誠 15 天｜-100', name: `${numStr} 月專屬優惠券｜100`, code: `${abbr}_100` },
     { usage: '潛在忠誠 23 天｜-150', name: `${numStr} 月專屬優惠券｜150`, code: `${abbr}_150` },
+    { usage: '開發型客戶（3 天）｜免運・滿 999・每帳號 1 次', name: `${numStr} 月專屬優惠券｜免運`, code: `${abbr}_999` },
   ];
 
   document.getElementById('gen-result-s').style.display = '';
@@ -310,11 +314,12 @@ function applyGeneratedCodes(monthNum, abbr) {
   tbody.querySelectorAll('tr').forEach(row => {
     if (row.dataset.month === monthStr) {
       const cells = row.querySelectorAll('[contenteditable]');
-      if (cells.length >= 4) {
+      if (cells.length >= 5) {
         cells[0].textContent = `${abbr}_85`;
         cells[1].textContent = `${abbr}_9`;
         cells[2].textContent = `${abbr}_100`;
         cells[3].textContent = `${abbr}_150`;
+        cells[4].textContent = `${abbr}_999`;
         saveCodes();
         applied = true;
       }
